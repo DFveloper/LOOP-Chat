@@ -1,4 +1,7 @@
 name: Create and publish Docker images with specific build args
+permissions:
+  contents: read
+  packages: write
 
 on:
   workflow_dispatch:
