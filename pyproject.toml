@@ -1,8 +1,8 @@
 [project]
-name = "open-webui"
-description = "Open WebUI"
+name = "loop-chat"
+description = "LOOP Chat"
 authors = [
-    { name = "Timothy Jaeryang Baek", email = "tim@openwebui.com" }
+    { name = "Dongwon Kwon", email = "robotics-d0@naver.com" }
 ]
 license = { file = "LICENSE" }
 dependencies = [
@@ -145,7 +145,7 @@ classifiers = [
 ]
 
 [project.scripts]
-open-webui = "open_webui:app"
+open-webui = "loop-chat:app"
 
 [build-system]
 requires = ["hatchling"]
