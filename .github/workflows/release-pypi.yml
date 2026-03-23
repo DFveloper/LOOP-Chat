@@ -2,9 +2,9 @@ name: Release to PyPI
 
 on:
   push:
-    branches:
-      - main # or whatever branch you want to use
-      - pypi-release
+    tags:
+      - 'v*'          # v1.0.0, v0.1.2 이런 식으로 태그 달면 publish
+
 
 jobs:
   release:
