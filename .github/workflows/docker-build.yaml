@@ -59,7 +59,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Docker images (default latest tag)
+      - name: Extract metadata for Docker images
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -70,9 +70,15 @@ jobs:
             type=sha,prefix=git-
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            # nightly/dev용 추가 태그 (branch push일 때만)
+            type=raw,value=nightly,enable=${{ github.ref_type == 'branch' }}
+            # release용 latest는 tag push + semver일 때만 (또는 main 브랜치 태그)
+            type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
           flavor: |
-            latest=${{ github.ref == 'refs/heads/main' }}
-
+            # 기본 latest는 끄고 위에서 conditional로 제어
+            latest=false
+            # suffix는 variant별로 이미 잘 붙고 있음
+            
       - name: Extract metadata for Docker cache
         id: cache-meta
         uses: docker/metadata-action@v5
