@@ -7,11 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status, Backgrou
 from pydantic import BaseModel
 
 
-from open_webui.socket.main import sio, get_user_ids_from_room
-from open_webui.models.users import Users, UserNameResponse
+from loop-chat.socket.main import sio, get_user_ids_from_room
+from loop-chat.models.users import Users, UserNameResponse
 
-from open_webui.models.channels import Channels, ChannelModel, ChannelForm
-from open_webui.models.messages import (
+from loop-chat.models.channels import Channels, ChannelModel, ChannelForm
+from loop-chat.models.messages import (
     Messages,
     MessageModel,
     MessageResponse,
@@ -19,14 +19,14 @@ from open_webui.models.messages import (
 )
 
 
-from open_webui.config import ENABLE_ADMIN_CHAT_ACCESS, ENABLE_ADMIN_EXPORT
-from open_webui.constants import ERROR_MESSAGES
-from open_webui.env import SRC_LOG_LEVELS
+from loop-chat.config import ENABLE_ADMIN_CHAT_ACCESS, ENABLE_ADMIN_EXPORT
+from loop-chat.constants import ERROR_MESSAGES
+from loop-chat.env import SRC_LOG_LEVELS
 
 
-from open_webui.utils.auth import get_admin_user, get_verified_user
-from open_webui.utils.access_control import has_access, get_users_with_access
-from open_webui.utils.webhook import post_webhook
+from loop-chat.utils.auth import get_admin_user, get_verified_user
+from loop-chat.utils.access_control import has_access, get_users_with_access
+from loop-chat.utils.webhook import post_webhook
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

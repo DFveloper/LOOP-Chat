@@ -5,7 +5,7 @@ import datetime
 import logging
 from aiohttp import ClientSession
 
-from open_webui.models.auths import (
+from loop-chat.models.auths import (
     AddUserForm,
     ApiKey,
     Auths,
@@ -18,10 +18,10 @@ from open_webui.models.auths import (
     UpdateProfileForm,
     UserResponse,
 )
-from open_webui.models.users import Users
+from loop-chat.models.users import Users
 
-from open_webui.constants import ERROR_MESSAGES, WEBHOOK_MESSAGES
-from open_webui.env import (
+from loop-chat.constants import ERROR_MESSAGES, WEBHOOK_MESSAGES
+from loop-chat.env import (
     WEBUI_AUTH,
     WEBUI_AUTH_TRUSTED_EMAIL_HEADER,
     WEBUI_AUTH_TRUSTED_NAME_HEADER,
@@ -31,10 +31,10 @@ from open_webui.env import (
 )
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse, Response
-from open_webui.config import OPENID_PROVIDER_URL, ENABLE_OAUTH_SIGNUP, ENABLE_LDAP
+from loop-chat.config import OPENID_PROVIDER_URL, ENABLE_OAUTH_SIGNUP, ENABLE_LDAP
 from pydantic import BaseModel
-from open_webui.utils.misc import parse_duration, validate_email_format
-from open_webui.utils.auth import (
+from loop-chat.utils.misc import parse_duration, validate_email_format
+from loop-chat.utils.auth import (
     create_api_key,
     create_token,
     get_admin_user,
@@ -42,8 +42,8 @@ from open_webui.utils.auth import (
     get_current_user,
     get_password_hash,
 )
-from open_webui.utils.webhook import post_webhook
-from open_webui.utils.access_control import get_permissions
+from loop-chat.utils.webhook import post_webhook
+from loop-chat.utils.access_control import get_permissions
 
 from typing import Optional, List
 

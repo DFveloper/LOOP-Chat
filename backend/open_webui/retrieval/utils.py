@@ -11,21 +11,21 @@ from langchain.retrievers import ContextualCompressionRetriever, EnsembleRetriev
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 
-from open_webui.config import VECTOR_DB
-from open_webui.retrieval.vector.connector import VECTOR_DB_CLIENT
+from loop-chat.config import VECTOR_DB
+from loop-chat.retrieval.vector.connector import VECTOR_DB_CLIENT
 
-from open_webui.models.users import UserModel
-from open_webui.models.files import Files
+from loop-chat.models.users import UserModel
+from loop-chat.models.files import Files
 
-from open_webui.retrieval.vector.main import GetResult
+from loop-chat.retrieval.vector.main import GetResult
 
 
-from open_webui.env import (
+from loop-chat.env import (
     SRC_LOG_LEVELS,
     OFFLINE_MODE,
     ENABLE_FORWARD_USER_INFO_HEADERS,
 )
-from open_webui.config import (
+from loop-chat.config import (
     RAG_EMBEDDING_QUERY_PREFIX,
     RAG_EMBEDDING_CONTENT_PREFIX,
     RAG_EMBEDDING_PREFIX_FIELD_NAME,

@@ -22,43 +22,43 @@ from fastapi import Request, HTTPException
 from starlette.responses import Response, StreamingResponse
 
 
-from open_webui.models.chats import Chats
-from open_webui.models.users import Users
-from open_webui.socket.main import (
+from loop-chat.models.chats import Chats
+from loop-chat.models.users import Users
+from loop-chat.socket.main import (
     get_event_call,
     get_event_emitter,
     get_active_status_by_user_id,
 )
-from open_webui.routers.tasks import (
+from loop-chat.routers.tasks import (
     generate_queries,
     generate_title,
     generate_image_prompt,
     generate_chat_tags,
 )
-from open_webui.routers.retrieval import process_web_search, SearchForm
-from open_webui.routers.images import image_generations, GenerateImageForm
-from open_webui.routers.pipelines import (
+from loop-chat.routers.retrieval import process_web_search, SearchForm
+from loop-chat.routers.images import image_generations, GenerateImageForm
+from loop-chat.routers.pipelines import (
     process_pipeline_inlet_filter,
     process_pipeline_outlet_filter,
 )
 
-from open_webui.utils.webhook import post_webhook
+from loop-chat.utils.webhook import post_webhook
 
 
-from open_webui.models.users import UserModel
-from open_webui.models.functions import Functions
-from open_webui.models.models import Models
+from loop-chat.models.users import UserModel
+from loop-chat.models.functions import Functions
+from loop-chat.models.models import Models
 
-from open_webui.retrieval.utils import get_sources_from_files
+from loop-chat.retrieval.utils import get_sources_from_files
 
 
-from open_webui.utils.chat import generate_chat_completion
-from open_webui.utils.task import (
+from loop-chat.utils.chat import generate_chat_completion
+from loop-chat.utils.task import (
     get_task_model_id,
     rag_template,
     tools_function_calling_generation_template,
 )
-from open_webui.utils.misc import (
+from loop-chat.utils.misc import (
     deep_update,
     get_message_list,
     add_or_update_system_message,
@@ -68,28 +68,28 @@ from open_webui.utils.misc import (
     prepend_to_first_user_message_content,
     convert_logit_bias_input_to_json,
 )
-from open_webui.utils.tools import get_tools
-from open_webui.utils.plugin import load_function_module_by_id
-from open_webui.utils.filter import (
+from loop-chat.utils.tools import get_tools
+from loop-chat.utils.plugin import load_function_module_by_id
+from loop-chat.utils.filter import (
     get_sorted_filter_ids,
     process_filter_functions,
 )
-from open_webui.utils.code_interpreter import execute_code_jupyter
+from loop-chat.utils.code_interpreter import execute_code_jupyter
 
-from open_webui.tasks import create_task
+from loop-chat.tasks import create_task
 
-from open_webui.config import (
+from loop-chat.config import (
     CACHE_DIR,
     DEFAULT_TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE,
     DEFAULT_CODE_INTERPRETER_PROMPT,
 )
-from open_webui.env import (
+from loop-chat.env import (
     SRC_LOG_LEVELS,
     GLOBAL_LOG_LEVEL,
     BYPASS_MODEL_ACCESS_CONTROL,
     ENABLE_REALTIME_CHAT_SAVE,
 )
-from open_webui.constants import TASKS
+from loop-chat.constants import TASKS
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)

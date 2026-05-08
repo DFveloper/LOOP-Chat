@@ -1,13 +1,13 @@
 import time
 from typing import Optional
 
-from open_webui.internal.db import Base, get_db
-from open_webui.models.users import Users, UserResponse
+from loop-chat.internal.db import Base, get_db
+from loop-chat.models.users import Users, UserResponse
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Column, String, Text, JSON
 
-from open_webui.utils.access_control import has_access
+from loop-chat.utils.access_control import has_access
 
 ####################
 # Prompts DB Schema

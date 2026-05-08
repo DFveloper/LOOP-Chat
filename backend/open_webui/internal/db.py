@@ -3,8 +3,8 @@ import logging
 from contextlib import contextmanager
 from typing import Any, Optional
 
-from open_webui.internal.wrappers import register_connection
-from open_webui.env import (
+from loop-chat.internal.wrappers import register_connection
+from loop-chat.env import (
     OPEN_WEBUI_DIR,
     DATABASE_URL,
     DATABASE_SCHEMA,

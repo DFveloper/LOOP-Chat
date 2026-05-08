@@ -1,15 +1,15 @@
 from typing import Optional
 
-from open_webui.models.prompts import (
+from loop-chat.models.prompts import (
     PromptForm,
     PromptUserResponse,
     PromptModel,
     Prompts,
 )
-from open_webui.constants import ERROR_MESSAGES
+from loop-chat.constants import ERROR_MESSAGES
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from open_webui.utils.auth import get_admin_user, get_verified_user
-from open_webui.utils.access_control import has_access, has_permission
+from loop-chat.utils.auth import get_admin_user, get_verified_user
+from loop-chat.utils.access_control import has_access, has_permission
 
 router = APIRouter()
 

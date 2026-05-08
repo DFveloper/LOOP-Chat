@@ -17,21 +17,21 @@ from fastapi import (
     Query,
 )
 from fastapi.responses import FileResponse, StreamingResponse
-from open_webui.constants import ERROR_MESSAGES
-from open_webui.env import SRC_LOG_LEVELS
-from open_webui.models.files import (
+from loop-chat.constants import ERROR_MESSAGES
+from loop-chat.env import SRC_LOG_LEVELS
+from loop-chat.models.files import (
     FileForm,
     FileModel,
     FileModelResponse,
     Files,
 )
-from open_webui.models.knowledge import Knowledges
+from loop-chat.models.knowledge import Knowledges
 
-from open_webui.routers.knowledge import get_knowledge, get_knowledge_list
-from open_webui.routers.retrieval import ProcessFileForm, process_file
-from open_webui.routers.audio import transcribe
-from open_webui.storage.provider import Storage
-from open_webui.utils.auth import get_admin_user, get_verified_user
+from loop-chat.routers.knowledge import get_knowledge, get_knowledge_list
+from loop-chat.routers.retrieval import ProcessFileForm, process_file
+from loop-chat.routers.audio import transcribe
+from loop-chat.storage.provider import Storage
+from loop-chat.utils.auth import get_admin_user, get_verified_user
 from pydantic import BaseModel
 
 log = logging.getLogger(__name__)

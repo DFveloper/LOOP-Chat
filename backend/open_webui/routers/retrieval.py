@@ -29,40 +29,40 @@ import tiktoken
 from langchain.text_splitter import RecursiveCharacterTextSplitter, TokenTextSplitter
 from langchain_core.documents import Document
 
-from open_webui.models.files import FileModel, Files
-from open_webui.models.knowledge import Knowledges
-from open_webui.storage.provider import Storage
+from loop-chat.models.files import FileModel, Files
+from loop-chat.models.knowledge import Knowledges
+from loop-chat.storage.provider import Storage
 
 
-from open_webui.retrieval.vector.connector import VECTOR_DB_CLIENT
+from loop-chat.retrieval.vector.connector import VECTOR_DB_CLIENT
 
 # Document loaders
-from open_webui.retrieval.loaders.main import Loader
-from open_webui.retrieval.loaders.youtube import YoutubeLoader
+from loop-chat.retrieval.loaders.main import Loader
+from loop-chat.retrieval.loaders.youtube import YoutubeLoader
 
 # Web search engines
-from open_webui.retrieval.web.main import SearchResult
-from open_webui.retrieval.web.utils import get_web_loader
-from open_webui.retrieval.web.brave import search_brave
-from open_webui.retrieval.web.kagi import search_kagi
-from open_webui.retrieval.web.mojeek import search_mojeek
-from open_webui.retrieval.web.bocha import search_bocha
-from open_webui.retrieval.web.duckduckgo import search_duckduckgo
-from open_webui.retrieval.web.google_pse import search_google_pse
-from open_webui.retrieval.web.jina_search import search_jina
-from open_webui.retrieval.web.searchapi import search_searchapi
-from open_webui.retrieval.web.serpapi import search_serpapi
-from open_webui.retrieval.web.searxng import search_searxng
-from open_webui.retrieval.web.serper import search_serper
-from open_webui.retrieval.web.serply import search_serply
-from open_webui.retrieval.web.serpstack import search_serpstack
-from open_webui.retrieval.web.tavily import search_tavily
-from open_webui.retrieval.web.bing import search_bing
-from open_webui.retrieval.web.exa import search_exa
-from open_webui.retrieval.web.perplexity import search_perplexity
-from open_webui.retrieval.web.sougou import search_sougou
+from loop-chat.retrieval.web.main import SearchResult
+from loop-chat.retrieval.web.utils import get_web_loader
+from loop-chat.retrieval.web.brave import search_brave
+from loop-chat.retrieval.web.kagi import search_kagi
+from loop-chat.retrieval.web.mojeek import search_mojeek
+from loop-chat.retrieval.web.bocha import search_bocha
+from loop-chat.retrieval.web.duckduckgo import search_duckduckgo
+from loop-chat.retrieval.web.google_pse import search_google_pse
+from loop-chat.retrieval.web.jina_search import search_jina
+from loop-chat.retrieval.web.searchapi import search_searchapi
+from loop-chat.retrieval.web.serpapi import search_serpapi
+from loop-chat.retrieval.web.searxng import search_searxng
+from loop-chat.retrieval.web.serper import search_serper
+from loop-chat.retrieval.web.serply import search_serply
+from loop-chat.retrieval.web.serpstack import search_serpstack
+from loop-chat.retrieval.web.tavily import search_tavily
+from loop-chat.retrieval.web.bing import search_bing
+from loop-chat.retrieval.web.exa import search_exa
+from loop-chat.retrieval.web.perplexity import search_perplexity
+from loop-chat.retrieval.web.sougou import search_sougou
 
-from open_webui.retrieval.utils import (
+from loop-chat.retrieval.utils import (
     get_embedding_function,
     get_model_path,
     query_collection,
@@ -70,12 +70,12 @@ from open_webui.retrieval.utils import (
     query_doc,
     query_doc_with_hybrid_search,
 )
-from open_webui.utils.misc import (
+from loop-chat.utils.misc import (
     calculate_sha256_string,
 )
-from open_webui.utils.auth import get_admin_user, get_verified_user
+from loop-chat.utils.auth import get_admin_user, get_verified_user
 
-from open_webui.config import (
+from loop-chat.config import (
     ENV,
     RAG_EMBEDDING_MODEL_AUTO_UPDATE,
     RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE,
@@ -86,12 +86,12 @@ from open_webui.config import (
     RAG_EMBEDDING_CONTENT_PREFIX,
     RAG_EMBEDDING_QUERY_PREFIX,
 )
-from open_webui.env import (
+from loop-chat.env import (
     SRC_LOG_LEVELS,
     DEVICE_TYPE,
     DOCKER,
 )
-from open_webui.constants import ERROR_MESSAGES
+from loop-chat.constants import ERROR_MESSAGES
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["RAG"])
@@ -132,7 +132,7 @@ def get_rf(
     if reranking_model:
         if any(model in reranking_model for model in ["jinaai/jina-colbert-v2"]):
             try:
-                from open_webui.retrieval.models.colbert import ColBERT
+                from loop-chat.retrieval.models.colbert import ColBERT
 
                 rf = ColBERT(
                     get_model_path(reranking_model, auto_update),

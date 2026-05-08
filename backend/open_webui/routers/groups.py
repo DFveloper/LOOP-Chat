@@ -3,20 +3,20 @@ from pathlib import Path
 from typing import Optional
 import logging
 
-from open_webui.models.users import Users
-from open_webui.models.groups import (
+from loop-chat.models.users import Users
+from loop-chat.models.groups import (
     Groups,
     GroupForm,
     GroupUpdateForm,
     GroupResponse,
 )
 
-from open_webui.config import CACHE_DIR
-from open_webui.constants import ERROR_MESSAGES
+from loop-chat.config import CACHE_DIR
+from loop-chat.constants import ERROR_MESSAGES
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
-from open_webui.utils.auth import get_admin_user, get_verified_user
-from open_webui.env import SRC_LOG_LEVELS
+from loop-chat.utils.auth import get_admin_user, get_verified_user
+from loop-chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

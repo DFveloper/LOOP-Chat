@@ -1,5 +1,5 @@
-from open_webui.utils.task import prompt_template, prompt_variables_template
-from open_webui.utils.misc import (
+from loop-chat.utils.task import prompt_template, prompt_variables_template
+from loop-chat.utils.misc import (
     add_or_update_system_message,
 )
 

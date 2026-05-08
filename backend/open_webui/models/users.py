@@ -1,11 +1,11 @@
 import time
 from typing import Optional
 
-from open_webui.internal.db import Base, JSONField, get_db
+from loop-chat.internal.db import Base, JSONField, get_db
 
 
-from open_webui.models.chats import Chats
-from open_webui.models.groups import Groups
+from loop-chat.models.chats import Chats
+from loop-chat.models.groups import Groups
 
 
 from pydantic import BaseModel, ConfigDict

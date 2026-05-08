@@ -1,9 +1,9 @@
 import inspect
 import logging
 
-from open_webui.utils.plugin import load_function_module_by_id
-from open_webui.models.functions import Functions
-from open_webui.env import SRC_LOG_LEVELS
+from loop-chat.utils.plugin import load_function_module_by_id
+from loop-chat.models.functions import Functions
+from loop-chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

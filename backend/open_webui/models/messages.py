@@ -3,8 +3,8 @@ import time
 import uuid
 from typing import Optional
 
-from open_webui.internal.db import Base, get_db
-from open_webui.models.tags import TagModel, Tag, Tags
+from loop-chat.internal.db import Base, get_db
+from loop-chat.models.tags import TagModel, Tag, Tags
 
 
 from pydantic import BaseModel, ConfigDict

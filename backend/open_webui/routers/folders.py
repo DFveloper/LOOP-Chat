@@ -8,24 +8,24 @@ from pydantic import BaseModel
 import mimetypes
 
 
-from open_webui.models.folders import (
+from loop-chat.models.folders import (
     FolderForm,
     FolderModel,
     Folders,
 )
-from open_webui.models.chats import Chats
+from loop-chat.models.chats import Chats
 
-from open_webui.config import UPLOAD_DIR
-from open_webui.env import SRC_LOG_LEVELS
-from open_webui.constants import ERROR_MESSAGES
+from loop-chat.config import UPLOAD_DIR
+from loop-chat.env import SRC_LOG_LEVELS
+from loop-chat.constants import ERROR_MESSAGES
 
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status, Request
 from fastapi.responses import FileResponse, StreamingResponse
 
 
-from open_webui.utils.auth import get_admin_user, get_verified_user
-from open_webui.utils.access_control import has_permission
+from loop-chat.utils.auth import get_admin_user, get_verified_user
+from loop-chat.utils.access_control import has_permission
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

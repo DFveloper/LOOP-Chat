@@ -5,24 +5,24 @@ import sys
 from aiocache import cached
 from fastapi import Request
 
-from open_webui.routers import openai, ollama
-from open_webui.functions import get_function_models
+from loop-chat.routers import openai, ollama
+from loop-chat.functions import get_function_models
 
 
-from open_webui.models.functions import Functions
-from open_webui.models.models import Models
+from loop-chat.models.functions import Functions
+from loop-chat.models.models import Models
 
 
-from open_webui.utils.plugin import load_function_module_by_id
-from open_webui.utils.access_control import has_access
+from loop-chat.utils.plugin import load_function_module_by_id
+from loop-chat.utils.access_control import has_access
 
 
-from open_webui.config import (
+from loop-chat.config import (
     DEFAULT_ARENA_MODEL,
 )
 
-from open_webui.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
-from open_webui.models.users import UserModel
+from loop-chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
+from loop-chat.models.users import UserModel
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)
