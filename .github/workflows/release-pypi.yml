@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'          # v1.0.0, v0.1.2 이런 식으로 태그 달면 publish
+  workflow_dispatch:
 
 
 jobs:
