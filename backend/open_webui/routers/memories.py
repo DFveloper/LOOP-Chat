@@ -3,10 +3,10 @@ from pydantic import BaseModel
 import logging
 from typing import Optional
 
-from loop-chat.models.memories import Memories, MemoryModel
-from loop-chat.retrieval.vector.connector import VECTOR_DB_CLIENT
-from loop-chat.utils.auth import get_verified_user
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.models.memories import Memories, MemoryModel
+from loop_chat.retrieval.vector.connector import VECTOR_DB_CLIENT
+from loop_chat.utils.auth import get_verified_user
+from loop_chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

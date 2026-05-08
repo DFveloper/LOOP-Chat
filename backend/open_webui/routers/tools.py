@@ -3,23 +3,23 @@ from pathlib import Path
 from typing import Optional
 import time
 
-from loop-chat.models.tools import (
+from loop_chat.models.tools import (
     ToolForm,
     ToolModel,
     ToolResponse,
     ToolUserResponse,
     Tools,
 )
-from loop-chat.utils.plugin import load_tool_module_by_id, replace_imports
-from loop-chat.config import CACHE_DIR
-from loop-chat.constants import ERROR_MESSAGES
+from loop_chat.utils.plugin import load_tool_module_by_id, replace_imports
+from loop_chat.config import CACHE_DIR
+from loop_chat.constants import ERROR_MESSAGES
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from loop-chat.utils.tools import get_tool_specs
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.utils.access_control import has_access, has_permission
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.utils.tools import get_tool_specs
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.utils.access_control import has_access, has_permission
+from loop_chat.env import SRC_LOG_LEVELS
 
-from loop-chat.utils.tools import get_tool_servers_data
+from loop_chat.utils.tools import get_tool_servers_data
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

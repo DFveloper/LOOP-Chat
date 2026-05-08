@@ -13,10 +13,10 @@ import pytz
 from pytz import UTC
 from typing import Optional, Union, List, Dict
 
-from loop-chat.models.users import Users
+from loop_chat.models.users import Users
 
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.env import (
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.env import (
     WEBUI_SECRET_KEY,
     TRUSTED_SIGNATURE_KEY,
     STATIC_DIR,

@@ -14,7 +14,7 @@ import requests
 from pydantic import BaseModel
 from sqlalchemy import JSON, Column, DateTime, Integer, func
 
-from loop-chat.env import (
+from loop_chat.env import (
     DATA_DIR,
     DATABASE_URL,
     ENV,
@@ -29,8 +29,8 @@ from loop-chat.env import (
     WEBUI_NAME,
     log,
 )
-from loop-chat.internal.db import Base, get_db
-from loop-chat.utils.redis import get_redis_connection
+from loop_chat.internal.db import Base, get_db
+from loop_chat.utils.redis import get_redis_connection
 
 
 class EndpointFilter(logging.Filter):

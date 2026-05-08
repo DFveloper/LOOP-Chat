@@ -8,7 +8,7 @@ from typing import BinaryIO, Tuple
 import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError
-from loop-chat.config import (
+from loop_chat.config import (
     S3_ACCESS_KEY_ID,
     S3_BUCKET_NAME,
     S3_ENDPOINT_URL,
@@ -27,11 +27,11 @@ from loop-chat.config import (
 )
 from google.cloud import storage
 from google.cloud.exceptions import GoogleCloudError, NotFound
-from loop-chat.constants import ERROR_MESSAGES
+from loop_chat.constants import ERROR_MESSAGES
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from azure.core.exceptions import ResourceNotFoundError
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

@@ -4,13 +4,13 @@ import json
 import logging
 from typing import Optional
 
-from loop-chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
-from loop-chat.config import (
+from loop_chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
+from loop_chat.config import (
     MILVUS_URI,
     MILVUS_DB,
     MILVUS_TOKEN,
 )
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["RAG"])

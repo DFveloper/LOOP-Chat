@@ -7,7 +7,7 @@ import urllib.request
 from typing import Optional
 
 import websocket  # NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 from pydantic import BaseModel
 
 log = logging.getLogger(__name__)

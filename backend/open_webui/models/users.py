@@ -1,11 +1,11 @@
 import time
 from typing import Optional
 
-from loop-chat.internal.db import Base, JSONField, get_db
+from loop_chat.internal.db import Base, JSONField, get_db
 
 
-from loop-chat.models.chats import Chats
-from loop-chat.models.groups import Groups
+from loop_chat.models.chats import Chats
+from loop_chat.models.groups import Groups
 
 
 from pydantic import BaseModel, ConfigDict

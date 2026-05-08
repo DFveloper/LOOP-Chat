@@ -1,10 +1,10 @@
 import logging
 from typing import Optional
 
-from loop-chat.models.auths import Auths
-from loop-chat.models.groups import Groups
-from loop-chat.models.chats import Chats
-from loop-chat.models.users import (
+from loop_chat.models.auths import Auths
+from loop_chat.models.groups import Groups
+from loop_chat.models.chats import Chats
+from loop_chat.models.users import (
     UserModel,
     UserRoleUpdateForm,
     Users,
@@ -13,14 +13,14 @@ from loop-chat.models.users import (
 )
 
 
-from loop-chat.socket.main import get_active_status_by_user_id
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.socket.main import get_active_status_by_user_id
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.env import SRC_LOG_LEVELS
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
-from loop-chat.utils.auth import get_admin_user, get_password_hash, get_verified_user
-from loop-chat.utils.access_control import get_permissions
+from loop_chat.utils.auth import get_admin_user, get_password_hash, get_verified_user
+from loop_chat.utils.access_control import get_permissions
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

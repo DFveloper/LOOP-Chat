@@ -3,8 +3,8 @@ import os
 from pprint import pprint
 from typing import Optional
 import requests
-from loop-chat.retrieval.web.main import SearchResult, get_filtered_results
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.retrieval.web.main import SearchResult, get_filtered_results
+from loop_chat.env import SRC_LOG_LEVELS
 import argparse
 
 log = logging.getLogger(__name__)

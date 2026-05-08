@@ -18,14 +18,14 @@ from pydantic import BaseModel
 from starlette.responses import FileResponse
 from typing import Optional
 
-from loop-chat.env import SRC_LOG_LEVELS
-from loop-chat.config import CACHE_DIR
-from loop-chat.constants import ERROR_MESSAGES
+from loop_chat.env import SRC_LOG_LEVELS
+from loop_chat.config import CACHE_DIR
+from loop_chat.constants import ERROR_MESSAGES
 
 
-from loop-chat.routers.openai import get_all_models_responses
+from loop_chat.routers.openai import get_all_models_responses
 
-from loop-chat.utils.auth import get_admin_user
+from loop_chat.utils.auth import get_admin_user
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

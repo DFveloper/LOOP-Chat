@@ -9,7 +9,7 @@ from pathlib import Path
 
 import markdown
 from bs4 import BeautifulSoup
-from loop-chat.constants import ERROR_MESSAGES
+from loop_chat.constants import ERROR_MESSAGES
 
 ####################################
 # Load .env file

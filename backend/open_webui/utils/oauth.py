@@ -13,10 +13,10 @@ from fastapi import (
 )
 from starlette.responses import RedirectResponse
 
-from loop-chat.models.auths import Auths
-from loop-chat.models.users import Users
-from loop-chat.models.groups import Groups, GroupModel, GroupUpdateForm
-from loop-chat.config import (
+from loop_chat.models.auths import Auths
+from loop_chat.models.users import Users
+from loop_chat.models.groups import Groups, GroupModel, GroupUpdateForm
+from loop_chat.config import (
     DEFAULT_USER_ROLE,
     ENABLE_OAUTH_SIGNUP,
     OAUTH_MERGE_ACCOUNTS_BY_EMAIL,
@@ -35,17 +35,17 @@ from loop-chat.config import (
     JWT_EXPIRES_IN,
     AppConfig,
 )
-from loop-chat.constants import ERROR_MESSAGES, WEBHOOK_MESSAGES
-from loop-chat.env import (
+from loop_chat.constants import ERROR_MESSAGES, WEBHOOK_MESSAGES
+from loop_chat.env import (
     WEBUI_NAME,
     WEBUI_AUTH_COOKIE_SAME_SITE,
     WEBUI_AUTH_COOKIE_SECURE,
 )
-from loop-chat.utils.misc import parse_duration
-from loop-chat.utils.auth import get_password_hash, create_token
-from loop-chat.utils.webhook import post_webhook
+from loop_chat.utils.misc import parse_duration
+from loop_chat.utils.auth import get_password_hash, create_token
+from loop_chat.utils.webhook import post_webhook
 
-from loop-chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
+from loop_chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)

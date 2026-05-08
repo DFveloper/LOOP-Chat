@@ -17,21 +17,21 @@ from fastapi import (
     Query,
 )
 from fastapi.responses import FileResponse, StreamingResponse
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.env import SRC_LOG_LEVELS
-from loop-chat.models.files import (
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.env import SRC_LOG_LEVELS
+from loop_chat.models.files import (
     FileForm,
     FileModel,
     FileModelResponse,
     Files,
 )
-from loop-chat.models.knowledge import Knowledges
+from loop_chat.models.knowledge import Knowledges
 
-from loop-chat.routers.knowledge import get_knowledge, get_knowledge_list
-from loop-chat.routers.retrieval import ProcessFileForm, process_file
-from loop-chat.routers.audio import transcribe
-from loop-chat.storage.provider import Storage
-from loop-chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.routers.knowledge import get_knowledge, get_knowledge_list
+from loop_chat.routers.retrieval import ProcessFileForm, process_file
+from loop_chat.routers.audio import transcribe
+from loop_chat.storage.provider import Storage
+from loop_chat.utils.auth import get_admin_user, get_verified_user
 from pydantic import BaseModel
 
 log = logging.getLogger(__name__)

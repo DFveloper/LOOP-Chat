@@ -5,24 +5,24 @@ import sys
 from aiocache import cached
 from fastapi import Request
 
-from loop-chat.routers import openai, ollama
-from loop-chat.functions import get_function_models
+from loop_chat.routers import openai, ollama
+from loop_chat.functions import get_function_models
 
 
-from loop-chat.models.functions import Functions
-from loop-chat.models.models import Models
+from loop_chat.models.functions import Functions
+from loop_chat.models.models import Models
 
 
-from loop-chat.utils.plugin import load_function_module_by_id
-from loop-chat.utils.access_control import has_access
+from loop_chat.utils.plugin import load_function_module_by_id
+from loop_chat.utils.access_control import has_access
 
 
-from loop-chat.config import (
+from loop_chat.config import (
     DEFAULT_ARENA_MODEL,
 )
 
-from loop-chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
-from loop-chat.models.users import UserModel
+from loop_chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
+from loop_chat.models.users import UserModel
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)

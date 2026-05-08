@@ -1,8 +1,8 @@
 import logging
 
 import requests
-from loop-chat.retrieval.web.main import SearchResult
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.retrieval.web.main import SearchResult
+from loop_chat.env import SRC_LOG_LEVELS
 from yarl import URL
 
 log = logging.getLogger(__name__)

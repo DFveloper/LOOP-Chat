@@ -14,9 +14,9 @@ from urllib.parse import urlparse
 import aiohttp
 from aiocache import cached
 import requests
-from loop-chat.models.users import UserModel
+from loop_chat.models.users import UserModel
 
-from loop-chat.env import (
+from loop_chat.env import (
     ENABLE_FORWARD_USER_INFO_HEADERS,
 )
 
@@ -35,30 +35,30 @@ from pydantic import BaseModel, ConfigDict, validator
 from starlette.background import BackgroundTask
 
 
-from loop-chat.models.models import Models
-from loop-chat.utils.misc import (
+from loop_chat.models.models import Models
+from loop_chat.utils.misc import (
     calculate_sha256,
 )
-from loop-chat.utils.payload import (
+from loop_chat.utils.payload import (
     apply_model_params_to_body_ollama,
     apply_model_params_to_body_openai,
     apply_model_system_prompt_to_body,
 )
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.utils.access_control import has_access
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.utils.access_control import has_access
 
 
-from loop-chat.config import (
+from loop_chat.config import (
     UPLOAD_DIR,
 )
-from loop-chat.env import (
+from loop_chat.env import (
     ENV,
     SRC_LOG_LEVELS,
     AIOHTTP_CLIENT_TIMEOUT,
     AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST,
     BYPASS_MODEL_ACCESS_CONTROL,
 )
-from loop-chat.constants import ERROR_MESSAGES
+from loop_chat.constants import ERROR_MESSAGES
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["OLLAMA"])

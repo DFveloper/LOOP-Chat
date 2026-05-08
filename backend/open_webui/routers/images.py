@@ -10,12 +10,12 @@ from typing import Optional
 
 import requests
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
-from loop-chat.config import CACHE_DIR
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.env import ENABLE_FORWARD_USER_INFO_HEADERS, SRC_LOG_LEVELS
-from loop-chat.routers.files import upload_file
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.utils.images.comfyui import (
+from loop_chat.config import CACHE_DIR
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.env import ENABLE_FORWARD_USER_INFO_HEADERS, SRC_LOG_LEVELS
+from loop_chat.routers.files import upload_file
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.utils.images.comfyui import (
     ComfyUIGenerateImageForm,
     ComfyUIWorkflow,
     comfyui_generate_image,

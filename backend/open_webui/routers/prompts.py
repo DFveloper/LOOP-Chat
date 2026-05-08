@@ -1,15 +1,15 @@
 from typing import Optional
 
-from loop-chat.models.prompts import (
+from loop_chat.models.prompts import (
     PromptForm,
     PromptUserResponse,
     PromptModel,
     Prompts,
 )
-from loop-chat.constants import ERROR_MESSAGES
+from loop_chat.constants import ERROR_MESSAGES
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.utils.access_control import has_access, has_permission
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.utils.access_control import has_access, has_permission
 
 router = APIRouter()
 

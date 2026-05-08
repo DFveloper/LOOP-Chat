@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 @contextmanager
 def mock_webui_user(**kwargs):
-    from loop-chat.routers.webui import app
+    from loop_chat.routers.webui import app
 
     with mock_user(app, **kwargs):
         yield
@@ -13,13 +13,13 @@ def mock_webui_user(**kwargs):
 
 @contextmanager
 def mock_user(app: FastAPI, **kwargs):
-    from loop-chat.utils.auth import (
+    from loop_chat.utils.auth import (
         get_current_user,
         get_verified_user,
         get_admin_user,
         get_current_user_by_api_key,
     )
-    from loop-chat.models.users import User
+    from loop_chat.models.users import User
 
     def create_user():
         user_parameters = {

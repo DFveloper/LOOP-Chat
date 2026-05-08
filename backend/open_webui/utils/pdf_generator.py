@@ -9,8 +9,8 @@ from markdown import markdown
 import site
 from fpdf import FPDF
 
-from loop-chat.env import STATIC_DIR, FONTS_DIR
-from loop-chat.models.chats import ChatTitleMessagesForm
+from loop_chat.env import STATIC_DIR, FONTS_DIR
+from loop_chat.models.chats import ChatTitleMessagesForm
 
 
 class PDFGenerator:

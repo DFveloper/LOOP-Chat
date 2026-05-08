@@ -3,13 +3,13 @@ import time
 import uuid
 from typing import Optional
 
-from loop-chat.internal.db import Base, get_db
-from loop-chat.models.chats import Chats
+from loop_chat.internal.db import Base, get_db
+from loop_chat.models.chats import Chats
 
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Column, Text, JSON, Boolean
-from loop-chat.utils.access_control import get_permissions
+from loop_chat.utils.access_control import get_permissions
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

@@ -11,21 +11,21 @@ from langchain.retrievers import ContextualCompressionRetriever, EnsembleRetriev
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 
-from loop-chat.config import VECTOR_DB
-from loop-chat.retrieval.vector.connector import VECTOR_DB_CLIENT
+from loop_chat.config import VECTOR_DB
+from loop_chat.retrieval.vector.connector import VECTOR_DB_CLIENT
 
-from loop-chat.models.users import UserModel
-from loop-chat.models.files import Files
+from loop_chat.models.users import UserModel
+from loop_chat.models.files import Files
 
-from loop-chat.retrieval.vector.main import GetResult
+from loop_chat.retrieval.vector.main import GetResult
 
 
-from loop-chat.env import (
+from loop_chat.env import (
     SRC_LOG_LEVELS,
     OFFLINE_MODE,
     ENABLE_FORWARD_USER_INFO_HEADERS,
 )
-from loop-chat.config import (
+from loop_chat.config import (
     RAG_EMBEDDING_QUERY_PREFIX,
     RAG_EMBEDDING_CONTENT_PREFIX,
     RAG_EMBEDDING_PREFIX_FIELD_NAME,

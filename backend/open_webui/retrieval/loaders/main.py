@@ -21,9 +21,9 @@ from langchain_community.document_loaders import (
 )
 from langchain_core.documents import Document
 
-from loop-chat.retrieval.loaders.mistral import MistralLoader
+from loop_chat.retrieval.loaders.mistral import MistralLoader
 
-from loop-chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
+from loop_chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)

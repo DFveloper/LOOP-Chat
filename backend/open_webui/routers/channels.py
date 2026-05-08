@@ -7,11 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status, Backgrou
 from pydantic import BaseModel
 
 
-from loop-chat.socket.main import sio, get_user_ids_from_room
-from loop-chat.models.users import Users, UserNameResponse
+from loop_chat.socket.main import sio, get_user_ids_from_room
+from loop_chat.models.users import Users, UserNameResponse
 
-from loop-chat.models.channels import Channels, ChannelModel, ChannelForm
-from loop-chat.models.messages import (
+from loop_chat.models.channels import Channels, ChannelModel, ChannelForm
+from loop_chat.models.messages import (
     Messages,
     MessageModel,
     MessageResponse,
@@ -19,14 +19,14 @@ from loop-chat.models.messages import (
 )
 
 
-from loop-chat.config import ENABLE_ADMIN_CHAT_ACCESS, ENABLE_ADMIN_EXPORT
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.config import ENABLE_ADMIN_CHAT_ACCESS, ENABLE_ADMIN_EXPORT
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.env import SRC_LOG_LEVELS
 
 
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.utils.access_control import has_access, get_users_with_access
-from loop-chat.utils.webhook import post_webhook
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.utils.access_control import has_access, get_users_with_access
+from loop_chat.utils.webhook import post_webhook
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

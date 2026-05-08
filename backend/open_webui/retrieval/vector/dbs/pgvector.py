@@ -22,10 +22,10 @@ from pgvector.sqlalchemy import Vector
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.exc import NoSuchTableError
 
-from loop-chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
-from loop-chat.config import PGVECTOR_DB_URL, PGVECTOR_INITIALIZE_MAX_VECTOR_LENGTH
+from loop_chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
+from loop_chat.config import PGVECTOR_DB_URL, PGVECTOR_INITIALIZE_MAX_VECTOR_LENGTH
 
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 
 VECTOR_LENGTH = PGVECTOR_INITIALIZE_MAX_VECTOR_LENGTH
 Base = declarative_base()
@@ -49,7 +49,7 @@ class PgvectorClient:
 
         # if no pgvector uri, use the existing database connection
         if not PGVECTOR_DB_URL:
-            from loop-chat.internal.db import Session
+            from loop_chat.internal.db import Session
 
             self.session = Session
         else:

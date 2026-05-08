@@ -25,7 +25,7 @@ class TestUsers(AbstractPostgresTest):
 
     def setup_class(cls):
         super().setup_class()
-        from loop-chat.models.users import Users
+        from loop_chat.models.users import Users
 
         cls.users = Users
 

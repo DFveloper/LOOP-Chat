@@ -7,8 +7,8 @@ class TestAuths(AbstractPostgresTest):
 
     def setup_class(cls):
         super().setup_class()
-        from loop-chat.models.auths import Auths
-        from loop-chat.models.users import Users
+        from loop_chat.models.auths import Auths
+        from loop_chat.models.users import Users
 
         cls.users = Users
         cls.auths = Auths
@@ -26,7 +26,7 @@ class TestAuths(AbstractPostgresTest):
         }
 
     def test_update_profile(self):
-        from loop-chat.utils.auth import get_password_hash
+        from loop_chat.utils.auth import get_password_hash
 
         user = self.auths.insert_new_auth(
             email="john.doe@openwebui.com",
@@ -47,7 +47,7 @@ class TestAuths(AbstractPostgresTest):
         assert db_user.profile_image_url == "/user2.png"
 
     def test_update_password(self):
-        from loop-chat.utils.auth import get_password_hash
+        from loop_chat.utils.auth import get_password_hash
 
         user = self.auths.insert_new_auth(
             email="john.doe@openwebui.com",
@@ -74,7 +74,7 @@ class TestAuths(AbstractPostgresTest):
         assert new_auth is not None
 
     def test_signin(self):
-        from loop-chat.utils.auth import get_password_hash
+        from loop_chat.utils.auth import get_password_hash
 
         user = self.auths.insert_new_auth(
             email="john.doe@openwebui.com",

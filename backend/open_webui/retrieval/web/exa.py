@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 import requests
-from loop-chat.env import SRC_LOG_LEVELS
-from loop-chat.retrieval.web.main import SearchResult
+from loop_chat.env import SRC_LOG_LEVELS
+from loop_chat.retrieval.web.main import SearchResult
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["RAG"])

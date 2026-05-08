@@ -33,10 +33,10 @@ from langchain_core.utils.function_calling import (
 )
 
 
-from loop-chat.models.tools import Tools
-from loop-chat.models.users import UserModel
-from loop-chat.utils.plugin import load_tool_module_by_id
-from loop-chat.env import AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA
+from loop_chat.models.tools import Tools
+from loop_chat.models.users import UserModel
+from loop_chat.utils.plugin import load_tool_module_by_id
+from loop_chat.env import AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA
 
 import copy
 

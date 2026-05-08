@@ -2,8 +2,8 @@ from elasticsearch import Elasticsearch, BadRequestError
 from typing import Optional
 import ssl
 from elasticsearch.helpers import bulk, scan
-from loop-chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
-from loop-chat.config import (
+from loop_chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
+from loop_chat.config import (
     ELASTICSEARCH_URL,
     ELASTICSEARCH_CA_CERTS,
     ELASTICSEARCH_API_KEY,

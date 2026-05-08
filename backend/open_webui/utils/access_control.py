@@ -1,9 +1,9 @@
 from typing import Optional, Union, List, Dict, Any
-from loop-chat.models.users import Users, UserModel
-from loop-chat.models.groups import Groups
+from loop_chat.models.users import Users, UserModel
+from loop_chat.models.groups import Groups
 
 
-from loop-chat.config import DEFAULT_USER_PERMISSIONS
+from loop_chat.config import DEFAULT_USER_PERMISSIONS
 import json
 
 

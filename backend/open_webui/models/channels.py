@@ -3,8 +3,8 @@ import time
 import uuid
 from typing import Optional
 
-from loop-chat.internal.db import Base, get_db
-from loop-chat.utils.access_control import has_access
+from loop_chat.internal.db import Base, get_db
+from loop_chat.utils.access_control import has_access
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Boolean, Column, String, Text, JSON

@@ -4,7 +4,7 @@ import boto3
 import pytest
 from botocore.exceptions import ClientError
 from moto import mock_aws
-from loop-chat.storage import provider
+from loop_chat.storage import provider
 from gcp_storage_emulator.server import create_server
 from google.cloud import storage
 from azure.storage.blob import BlobServiceClient, ContainerClient, BlobClient

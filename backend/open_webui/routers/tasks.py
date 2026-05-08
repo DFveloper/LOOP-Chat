@@ -6,8 +6,8 @@ from typing import Optional
 import logging
 import re
 
-from loop-chat.utils.chat import generate_chat_completion
-from loop-chat.utils.task import (
+from loop_chat.utils.chat import generate_chat_completion
+from loop_chat.utils.task import (
     title_generation_template,
     query_generation_template,
     image_prompt_generation_template,
@@ -16,17 +16,17 @@ from loop-chat.utils.task import (
     emoji_generation_template,
     moa_response_generation_template,
 )
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.constants import TASKS
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.constants import TASKS
 
-from loop-chat.routers.pipelines import process_pipeline_inlet_filter
-from loop-chat.utils.filter import (
+from loop_chat.routers.pipelines import process_pipeline_inlet_filter
+from loop_chat.utils.filter import (
     get_sorted_filter_ids,
     process_filter_functions,
 )
-from loop-chat.utils.task import get_task_model_id
+from loop_chat.utils.task import get_task_model_id
 
-from loop-chat.config import (
+from loop_chat.config import (
     DEFAULT_TITLE_GENERATION_PROMPT_TEMPLATE,
     DEFAULT_TAGS_GENERATION_PROMPT_TEMPLATE,
     DEFAULT_IMAGE_PROMPT_GENERATION_PROMPT_TEMPLATE,
@@ -35,7 +35,7 @@ from loop-chat.config import (
     DEFAULT_EMOJI_GENERATION_PROMPT_TEMPLATE,
     DEFAULT_MOA_GENERATION_PROMPT_TEMPLATE,
 )
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

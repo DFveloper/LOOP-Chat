@@ -14,45 +14,45 @@ from fastapi import Request, status
 from starlette.responses import Response, StreamingResponse, JSONResponse
 
 
-from loop-chat.models.users import UserModel
+from loop_chat.models.users import UserModel
 
-from loop-chat.socket.main import (
+from loop_chat.socket.main import (
     sio,
     get_event_call,
     get_event_emitter,
 )
-from loop-chat.functions import generate_function_chat_completion
+from loop_chat.functions import generate_function_chat_completion
 
-from loop-chat.routers.openai import (
+from loop_chat.routers.openai import (
     generate_chat_completion as generate_openai_chat_completion,
 )
 
-from loop-chat.routers.ollama import (
+from loop_chat.routers.ollama import (
     generate_chat_completion as generate_ollama_chat_completion,
 )
 
-from loop-chat.routers.pipelines import (
+from loop_chat.routers.pipelines import (
     process_pipeline_inlet_filter,
     process_pipeline_outlet_filter,
 )
 
-from loop-chat.models.functions import Functions
-from loop-chat.models.models import Models
+from loop_chat.models.functions import Functions
+from loop_chat.models.models import Models
 
 
-from loop-chat.utils.plugin import load_function_module_by_id
-from loop-chat.utils.models import get_all_models, check_model_access
-from loop-chat.utils.payload import convert_payload_openai_to_ollama
-from loop-chat.utils.response import (
+from loop_chat.utils.plugin import load_function_module_by_id
+from loop_chat.utils.models import get_all_models, check_model_access
+from loop_chat.utils.payload import convert_payload_openai_to_ollama
+from loop_chat.utils.response import (
     convert_response_ollama_to_openai,
     convert_streaming_response_ollama_to_openai,
 )
-from loop-chat.utils.filter import (
+from loop_chat.utils.filter import (
     get_sorted_filter_ids,
     process_filter_functions,
 )
 
-from loop-chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL, BYPASS_MODEL_ACCESS_CONTROL
+from loop_chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL, BYPASS_MODEL_ACCESS_CONTROL
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)

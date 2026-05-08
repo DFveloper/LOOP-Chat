@@ -28,15 +28,15 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.config import (
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.config import (
     WHISPER_MODEL_AUTO_UPDATE,
     WHISPER_MODEL_DIR,
     CACHE_DIR,
 )
 
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.env import (
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.env import (
     AIOHTTP_CLIENT_TIMEOUT,
     ENV,
     SRC_LOG_LEVELS,

@@ -2,16 +2,16 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from pydantic import BaseModel
 
-from loop-chat.models.users import Users, UserModel
-from loop-chat.models.feedbacks import (
+from loop_chat.models.users import Users, UserModel
+from loop_chat.models.feedbacks import (
     FeedbackModel,
     FeedbackResponse,
     FeedbackForm,
     Feedbacks,
 )
 
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.utils.auth import get_admin_user, get_verified_user
 
 router = APIRouter()
 

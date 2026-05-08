@@ -2,12 +2,12 @@ import logging
 import uuid
 from typing import Optional
 
-from loop-chat.internal.db import Base, get_db
-from loop-chat.models.users import UserModel, Users
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.internal.db import Base, get_db
+from loop_chat.models.users import UserModel, Users
+from loop_chat.env import SRC_LOG_LEVELS
 from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, String, Text
-from loop-chat.utils.auth import verify_password
+from loop_chat.utils.auth import verify_password
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

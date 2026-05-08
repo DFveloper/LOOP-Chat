@@ -3,8 +3,8 @@ import time
 import uuid
 from typing import Optional
 
-from loop-chat.internal.db import Base, get_db
-from loop-chat.models.tags import TagModel, Tag, Tags
+from loop_chat.internal.db import Base, get_db
+from loop_chat.models.tags import TagModel, Tag, Tags
 
 
 from pydantic import BaseModel, ConfigDict

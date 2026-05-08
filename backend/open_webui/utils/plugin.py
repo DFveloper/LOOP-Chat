@@ -7,9 +7,9 @@ import types
 import tempfile
 import logging
 
-from loop-chat.env import SRC_LOG_LEVELS, PIP_OPTIONS, PIP_PACKAGE_INDEX_OPTIONS
-from loop-chat.models.functions import Functions
-from loop-chat.models.tools import Tools
+from loop_chat.env import SRC_LOG_LEVELS, PIP_OPTIONS, PIP_PACKAGE_INDEX_OPTIONS
+from loop_chat.models.functions import Functions
+from loop_chat.models.tools import Tools
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
@@ -56,10 +56,10 @@ def replace_imports(content):
     Replace the import paths in the content.
     """
     replacements = {
-        "from utils": "from loop-chat.utils",
-        "from apps": "from loop-chat.apps",
-        "from main": "from loop-chat.main",
-        "from config": "from loop-chat.config",
+        "from utils": "from loop_chat.utils",
+        "from apps": "from loop_chat.apps",
+        "from main": "from loop_chat.main",
+        "from config": "from loop_chat.config",
     }
 
     for old, new in replacements.items():

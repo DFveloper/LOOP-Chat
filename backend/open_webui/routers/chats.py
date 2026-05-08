@@ -3,26 +3,26 @@ import logging
 from typing import Optional
 
 
-from loop-chat.socket.main import get_event_emitter
-from loop-chat.models.chats import (
+from loop_chat.socket.main import get_event_emitter
+from loop_chat.models.chats import (
     ChatForm,
     ChatImportForm,
     ChatResponse,
     Chats,
     ChatTitleIdResponse,
 )
-from loop-chat.models.tags import TagModel, Tags
-from loop-chat.models.folders import Folders
+from loop_chat.models.tags import TagModel, Tags
+from loop_chat.models.folders import Folders
 
-from loop-chat.config import ENABLE_ADMIN_CHAT_ACCESS, ENABLE_ADMIN_EXPORT
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.config import ENABLE_ADMIN_CHAT_ACCESS, ENABLE_ADMIN_EXPORT
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.env import SRC_LOG_LEVELS
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
 
-from loop-chat.utils.auth import get_admin_user, get_verified_user
-from loop-chat.utils.access_control import has_permission
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.utils.access_control import has_permission
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

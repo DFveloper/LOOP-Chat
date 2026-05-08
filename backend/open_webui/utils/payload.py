@@ -1,5 +1,5 @@
-from loop-chat.utils.task import prompt_template, prompt_variables_template
-from loop-chat.utils.misc import (
+from loop_chat.utils.task import prompt_template, prompt_variables_template
+from loop_chat.utils.misc import (
     add_or_update_system_message,
 )
 

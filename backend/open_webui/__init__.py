@@ -15,7 +15,7 @@ KEY_FILE = Path.cwd() / ".webui_secret_key"
 
 def version_callback(value: bool):
     if value:
-        from loop-chat.env import VERSION
+        from loop_chat.env import VERSION
 
         typer.echo(f"Open WebUI version: {VERSION}")
         raise typer.Exit()
@@ -72,11 +72,11 @@ def serve(
             os.environ["USE_CUDA_DOCKER"] = "false"
             os.environ["LD_LIBRARY_PATH"] = ":".join(LD_LIBRARY_PATH)
 
-    import loop-chat.main  # we need set environment variables before importing main
-    from loop-chat.env import UVICORN_WORKERS  # Import the workers setting
+    import loop_chat.main  # we need set environment variables before importing main
+    from loop_chat.env import UVICORN_WORKERS  # Import the workers setting
 
     uvicorn.run(
-        loop-chat.main.app,
+        loop_chat.main.app,
         host=host,
         port=port,
         forwarded_allow_ips="*",
@@ -91,7 +91,7 @@ def dev(
     reload: bool = True,
 ):
     uvicorn.run(
-        "loop-chat.main:app",
+        "loop_chat.main:app",
         host=host,
         port=port,
         reload=reload,

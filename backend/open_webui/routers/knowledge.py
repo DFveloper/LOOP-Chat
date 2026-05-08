@@ -3,29 +3,29 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 import logging
 
-from loop-chat.models.knowledge import (
+from loop_chat.models.knowledge import (
     Knowledges,
     KnowledgeForm,
     KnowledgeResponse,
     KnowledgeUserResponse,
 )
-from loop-chat.models.files import Files, FileModel
-from loop-chat.retrieval.vector.connector import VECTOR_DB_CLIENT
-from loop-chat.routers.retrieval import (
+from loop_chat.models.files import Files, FileModel
+from loop_chat.retrieval.vector.connector import VECTOR_DB_CLIENT
+from loop_chat.routers.retrieval import (
     process_file,
     ProcessFileForm,
     process_files_batch,
     BatchProcessFilesForm,
 )
-from loop-chat.storage.provider import Storage
+from loop_chat.storage.provider import Storage
 
-from loop-chat.constants import ERROR_MESSAGES
-from loop-chat.utils.auth import get_verified_user
-from loop-chat.utils.access_control import has_access, has_permission
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.utils.auth import get_verified_user
+from loop_chat.utils.access_control import has_access, has_permission
 
 
-from loop-chat.env import SRC_LOG_LEVELS
-from loop-chat.models.models import Models, ModelForm
+from loop_chat.env import SRC_LOG_LEVELS
+from loop_chat.models.models import Models, ModelForm
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

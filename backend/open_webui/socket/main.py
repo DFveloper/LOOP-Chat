@@ -5,15 +5,15 @@ import sys
 import time
 from redis import asyncio as aioredis
 
-from loop-chat.models.users import Users, UserNameResponse
-from loop-chat.models.channels import Channels
-from loop-chat.models.chats import Chats
-from loop-chat.utils.redis import (
+from loop_chat.models.users import Users, UserNameResponse
+from loop_chat.models.channels import Channels
+from loop_chat.models.chats import Chats
+from loop_chat.utils.redis import (
     get_sentinels_from_env,
     get_sentinel_url_from_env,
 )
 
-from loop-chat.env import (
+from loop_chat.env import (
     ENABLE_WEBSOCKET_SUPPORT,
     WEBSOCKET_MANAGER,
     WEBSOCKET_REDIS_URL,
@@ -21,10 +21,10 @@ from loop-chat.env import (
     WEBSOCKET_SENTINEL_PORT,
     WEBSOCKET_SENTINEL_HOSTS,
 )
-from loop-chat.utils.auth import decode_token
-from loop-chat.socket.utils import RedisDict, RedisLock
+from loop_chat.utils.auth import decode_token
+from loop_chat.socket.utils import RedisDict, RedisLock
 
-from loop-chat.env import (
+from loop_chat.env import (
     GLOBAL_LOG_LEVEL,
     SRC_LOG_LEVELS,
 )

@@ -2,9 +2,9 @@ import logging
 import time
 from typing import Optional
 
-from loop-chat.internal.db import Base, JSONField, get_db
-from loop-chat.models.users import Users
-from loop-chat.env import SRC_LOG_LEVELS
+from loop_chat.internal.db import Base, JSONField, get_db
+from loop_chat.models.users import Users
+from loop_chat.env import SRC_LOG_LEVELS
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Boolean, Column, String, Text
 

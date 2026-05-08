@@ -6,10 +6,10 @@ from typing import Optional
 import uuid
 
 
-from loop-chat.utils.misc import get_last_user_message, get_messages_content
+from loop_chat.utils.misc import get_last_user_message, get_messages_content
 
-from loop-chat.env import SRC_LOG_LEVELS
-from loop-chat.config import DEFAULT_RAG_TEMPLATE
+from loop_chat.env import SRC_LOG_LEVELS
+from loop_chat.config import DEFAULT_RAG_TEMPLATE
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["RAG"])

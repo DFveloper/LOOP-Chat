@@ -1,8 +1,8 @@
 from logging.config import fileConfig
 
 from alembic import context
-from loop-chat.models.auths import Auth
-from loop-chat.env import DATABASE_URL
+from loop_chat.models.auths import Auth
+from loop_chat.env import DATABASE_URL
 from sqlalchemy import engine_from_config, pool
 
 # this is the Alembic Config object, which provides
