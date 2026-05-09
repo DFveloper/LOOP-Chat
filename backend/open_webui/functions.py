@@ -19,29 +19,29 @@ from fastapi import (
 from starlette.responses import Response, StreamingResponse
 
 
-from open_webui.socket.main import (
+from loop_chat.socket.main import (
     get_event_call,
     get_event_emitter,
 )
 
 
-from open_webui.models.functions import Functions
-from open_webui.models.models import Models
+from loop_chat.models.functions import Functions
+from loop_chat.models.models import Models
 
-from open_webui.utils.plugin import load_function_module_by_id
-from open_webui.utils.tools import get_tools
-from open_webui.utils.access_control import has_access
+from loop_chat.utils.plugin import load_function_module_by_id
+from loop_chat.utils.tools import get_tools
+from loop_chat.utils.access_control import has_access
 
-from open_webui.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
+from loop_chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
 
-from open_webui.utils.misc import (
+from loop_chat.utils.misc import (
     add_or_update_system_message,
     get_last_user_message,
     prepend_to_first_user_message_content,
     openai_chat_chunk_message_template,
     openai_chat_completion_message_template,
 )
-from open_webui.utils.payload import (
+from loop_chat.utils.payload import (
     apply_model_params_to_body_openai,
     apply_model_system_prompt_to_body,
 )

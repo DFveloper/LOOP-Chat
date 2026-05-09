@@ -1,5 +1,5 @@
 [project]
-name = "loop-chat"
+name = "loop_chat"
 description = "LOOP Chat"
 authors = [
     { name = "Dongwon Kwon", email = "robotics-d0@naver.com" }
@@ -145,7 +145,7 @@ classifiers = [
 ]
 
 [project.scripts]
-open-webui = "loop-chat:app"
+open-webui = "loop_chat:app"
 
 [build-system]
 requires = ["hatchling"]

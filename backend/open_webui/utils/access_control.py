@@ -1,9 +1,9 @@
 from typing import Optional, Union, List, Dict, Any
-from open_webui.models.users import Users, UserModel
-from open_webui.models.groups import Groups
+from loop_chat.models.users import Users, UserModel
+from loop_chat.models.groups import Groups
 
 
-from open_webui.config import DEFAULT_USER_PERMISSIONS
+from loop_chat.config import DEFAULT_USER_PERMISSIONS
 import json
 
 

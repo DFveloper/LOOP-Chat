@@ -5,7 +5,7 @@ import numpy as np
 from colbert.infra import ColBERTConfig
 from colbert.modeling.checkpoint import Checkpoint
 
-from open_webui.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["RAG"])

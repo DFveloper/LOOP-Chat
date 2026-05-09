@@ -4,9 +4,9 @@ import time
 import uuid
 from typing import Optional
 
-from open_webui.internal.db import Base, get_db
-from open_webui.models.tags import TagModel, Tag, Tags
-from open_webui.env import SRC_LOG_LEVELS
+from loop_chat.internal.db import Base, get_db
+from loop_chat.models.tags import TagModel, Tag, Tags
+from loop_chat.env import SRC_LOG_LEVELS
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Boolean, Column, String, Text, JSON

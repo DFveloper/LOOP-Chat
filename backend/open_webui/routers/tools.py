@@ -3,23 +3,23 @@ from pathlib import Path
 from typing import Optional
 import time
 
-from open_webui.models.tools import (
+from loop_chat.models.tools import (
     ToolForm,
     ToolModel,
     ToolResponse,
     ToolUserResponse,
     Tools,
 )
-from open_webui.utils.plugin import load_tool_module_by_id, replace_imports
-from open_webui.config import CACHE_DIR
-from open_webui.constants import ERROR_MESSAGES
+from loop_chat.utils.plugin import load_tool_module_by_id, replace_imports
+from loop_chat.config import CACHE_DIR
+from loop_chat.constants import ERROR_MESSAGES
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from open_webui.utils.tools import get_tool_specs
-from open_webui.utils.auth import get_admin_user, get_verified_user
-from open_webui.utils.access_control import has_access, has_permission
-from open_webui.env import SRC_LOG_LEVELS
+from loop_chat.utils.tools import get_tool_specs
+from loop_chat.utils.auth import get_admin_user, get_verified_user
+from loop_chat.utils.access_control import has_access, has_permission
+from loop_chat.env import SRC_LOG_LEVELS
 
-from open_webui.utils.tools import get_tool_servers_data
+from loop_chat.utils.tools import get_tool_servers_data
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

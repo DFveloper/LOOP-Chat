@@ -5,9 +5,9 @@ from qdrant_client import QdrantClient as Qclient
 from qdrant_client.http.models import PointStruct
 from qdrant_client.models import models
 
-from open_webui.retrieval.vector.main import VectorItem, SearchResult, GetResult
-from open_webui.config import QDRANT_URI, QDRANT_API_KEY
-from open_webui.env import SRC_LOG_LEVELS
+from loop_chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
+from loop_chat.config import QDRANT_URI, QDRANT_API_KEY
+from loop_chat.env import SRC_LOG_LEVELS
 
 NO_LIMIT = 999999999
 

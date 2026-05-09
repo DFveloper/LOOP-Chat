@@ -45,14 +45,14 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import Response, StreamingResponse
 
 
-from open_webui.utils import logger
-from open_webui.utils.audit import AuditLevel, AuditLoggingMiddleware
-from open_webui.utils.logger import start_logger
-from open_webui.socket.main import (
+from loop_chat.utils import logger
+from loop_chat.utils.audit import AuditLevel, AuditLoggingMiddleware
+from loop_chat.utils.logger import start_logger
+from loop_chat.socket.main import (
     app as socket_app,
     periodic_usage_pool_cleanup,
 )
-from open_webui.routers import (
+from loop_chat.routers import (
     audio,
     images,
     ollama,
@@ -78,20 +78,20 @@ from open_webui.routers import (
     utils,
 )
 
-from open_webui.routers.retrieval import (
+from loop_chat.routers.retrieval import (
     get_embedding_function,
     get_ef,
     get_rf,
 )
 
-from open_webui.internal.db import Session, engine
+from loop_chat.internal.db import Session, engine
 
-from open_webui.models.functions import Functions
-from open_webui.models.models import Models
-from open_webui.models.users import UserModel, Users
-from open_webui.models.chats import Chats
+from loop_chat.models.functions import Functions
+from loop_chat.models.models import Models
+from loop_chat.models.users import UserModel, Users
+from loop_chat.models.chats import Chats
 
-from open_webui.config import (
+from loop_chat.config import (
     LICENSE_KEY,
     # Ollama
     ENABLE_OLLAMA_API,
@@ -323,7 +323,7 @@ from open_webui.config import (
     AppConfig,
     reset_config,
 )
-from open_webui.env import (
+from loop_chat.env import (
     AUDIT_EXCLUDED_PATHS,
     AUDIT_LOG_LEVEL,
     CHANGELOG,
@@ -350,36 +350,36 @@ from open_webui.env import (
 )
 
 
-from open_webui.utils.models import (
+from loop_chat.utils.models import (
     get_all_models,
     get_all_base_models,
     check_model_access,
 )
-from open_webui.utils.chat import (
+from loop_chat.utils.chat import (
     generate_chat_completion as chat_completion_handler,
     chat_completed as chat_completed_handler,
     chat_action as chat_action_handler,
 )
-from open_webui.utils.middleware import process_chat_payload, process_chat_response
-from open_webui.utils.access_control import has_access
+from loop_chat.utils.middleware import process_chat_payload, process_chat_response
+from loop_chat.utils.access_control import has_access
 
-from open_webui.utils.auth import (
+from loop_chat.utils.auth import (
     get_license_data,
     get_http_authorization_cred,
     decode_token,
     get_admin_user,
     get_verified_user,
 )
-from open_webui.utils.oauth import OAuthManager
-from open_webui.utils.security_headers import SecurityHeadersMiddleware
+from loop_chat.utils.oauth import OAuthManager
+from loop_chat.utils.security_headers import SecurityHeadersMiddleware
 
-from open_webui.tasks import (
+from loop_chat.tasks import (
     list_task_ids_by_chat_id,
     stop_task,
     list_tasks,
 )  # Import from tasks.py
 
-from open_webui.utils.redis import get_sentinels_from_env
+from loop_chat.utils.redis import get_sentinels_from_env
 
 if SAFE_MODE:
     print("SAFE MODE ENABLED")
@@ -459,7 +459,7 @@ app.state.LICENSE_METADATA = None
 ########################################
 
 if ENABLE_OTEL:
-    from open_webui.utils.telemetry.setup import setup as setup_opentelemetry
+    from loop_chat.utils.telemetry.setup import setup as setup_opentelemetry
 
     setup_opentelemetry(app=app, db_engine=engine)
 

@@ -3,29 +3,29 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 import logging
 
-from open_webui.models.knowledge import (
+from loop_chat.models.knowledge import (
     Knowledges,
     KnowledgeForm,
     KnowledgeResponse,
     KnowledgeUserResponse,
 )
-from open_webui.models.files import Files, FileModel
-from open_webui.retrieval.vector.connector import VECTOR_DB_CLIENT
-from open_webui.routers.retrieval import (
+from loop_chat.models.files import Files, FileModel
+from loop_chat.retrieval.vector.connector import VECTOR_DB_CLIENT
+from loop_chat.routers.retrieval import (
     process_file,
     ProcessFileForm,
     process_files_batch,
     BatchProcessFilesForm,
 )
-from open_webui.storage.provider import Storage
+from loop_chat.storage.provider import Storage
 
-from open_webui.constants import ERROR_MESSAGES
-from open_webui.utils.auth import get_verified_user
-from open_webui.utils.access_control import has_access, has_permission
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.utils.auth import get_verified_user
+from loop_chat.utils.access_control import has_access, has_permission
 
 
-from open_webui.env import SRC_LOG_LEVELS
-from open_webui.models.models import Models, ModelForm
+from loop_chat.env import SRC_LOG_LEVELS
+from loop_chat.models.models import Models, ModelForm
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

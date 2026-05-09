@@ -11,9 +11,9 @@ from typing import Sequence, Union
 import sqlalchemy as sa
 from alembic import op
 
-import open_webui.internal.db
-from open_webui.internal.db import JSONField
-from open_webui.migrations.util import get_existing_tables
+import loop_chat.internal.db
+from loop_chat.internal.db import JSONField
+from loop_chat.migrations.util import get_existing_tables
 
 # revision identifiers, used by Alembic.
 revision: str = "7e5b5dc7342b"

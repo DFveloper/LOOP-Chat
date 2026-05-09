@@ -24,9 +24,9 @@ from langchain_community.document_loaders import PlaywrightURLLoader, WebBaseLoa
 from langchain_community.document_loaders.firecrawl import FireCrawlLoader
 from langchain_community.document_loaders.base import BaseLoader
 from langchain_core.documents import Document
-from open_webui.retrieval.loaders.tavily import TavilyLoader
-from open_webui.constants import ERROR_MESSAGES
-from open_webui.config import (
+from loop_chat.retrieval.loaders.tavily import TavilyLoader
+from loop_chat.constants import ERROR_MESSAGES
+from loop_chat.config import (
     ENABLE_RAG_LOCAL_WEB_FETCH,
     PLAYWRIGHT_WS_URL,
     PLAYWRIGHT_TIMEOUT,
@@ -36,7 +36,7 @@ from open_webui.config import (
     TAVILY_API_KEY,
     TAVILY_EXTRACT_DEPTH,
 )
-from open_webui.env import SRC_LOG_LEVELS
+from loop_chat.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["RAG"])

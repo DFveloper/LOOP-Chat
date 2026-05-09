@@ -1,6 +1,6 @@
 import json
 from uuid import uuid4
-from open_webui.utils.misc import (
+from loop_chat.utils.misc import (
     openai_chat_chunk_message_template,
     openai_chat_completion_message_template,
 )

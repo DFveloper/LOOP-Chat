@@ -91,7 +91,7 @@ class AbstractPostgresTest(AbstractIntegrationTest):
             db = None
             while retries > 0:
                 try:
-                    from open_webui.config import OPEN_WEBUI_DIR
+                    from loop_chat.config import loop_chat_DIR
 
                     db = create_engine(database_url, pool_pre_ping=True)
                     db = db.connect()
@@ -114,7 +114,7 @@ class AbstractPostgresTest(AbstractIntegrationTest):
             pytest.fail(f"Could not setup test environment: {ex}")
 
     def _check_db_connection(self):
-        from open_webui.internal.db import Session
+        from loop_chat.internal.db import Session
 
         retries = 10
         while retries > 0:
@@ -138,7 +138,7 @@ class AbstractPostgresTest(AbstractIntegrationTest):
         cls.docker_client.containers.get(cls.DOCKER_CONTAINER_NAME).remove(force=True)
 
     def teardown_method(self):
-        from open_webui.internal.db import Session
+        from loop_chat.internal.db import Session
 
         # rollback everything not yet committed
         Session.commit()

@@ -24,9 +24,9 @@ from asgiref.typing import (
 from loguru import logger
 from starlette.requests import Request
 
-from open_webui.env import AUDIT_LOG_LEVEL, MAX_BODY_LOG_SIZE
-from open_webui.utils.auth import get_current_user, get_http_authorization_cred
-from open_webui.models.users import UserModel
+from loop_chat.env import AUDIT_LOG_LEVEL, MAX_BODY_LOG_SIZE
+from loop_chat.utils.auth import get_current_user, get_http_authorization_cred
+from loop_chat.models.users import UserModel
 
 if TYPE_CHECKING:
     from loguru import Logger

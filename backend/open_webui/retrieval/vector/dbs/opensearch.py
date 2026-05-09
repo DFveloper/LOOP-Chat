@@ -2,8 +2,8 @@ from opensearchpy import OpenSearch
 from opensearchpy.helpers import bulk
 from typing import Optional
 
-from open_webui.retrieval.vector.main import VectorItem, SearchResult, GetResult
-from open_webui.config import (
+from loop_chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
+from loop_chat.config import (
     OPENSEARCH_URI,
     OPENSEARCH_SSL,
     OPENSEARCH_CERT_VERIFY,

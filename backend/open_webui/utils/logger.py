@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from open_webui.env import (
+from loop_chat.env import (
     AUDIT_LOG_FILE_ROTATION_SIZE,
     AUDIT_LOG_LEVEL,
     AUDIT_LOGS_FILE_PATH,
