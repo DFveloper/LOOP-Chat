@@ -1,10 +1,6 @@
 {
 	"name": "loop-chat",
-<<<<<<< HEAD
 	"version": "26.5.16.1",
-=======
-	"version": "2026.5.16.1",
->>>>>>> 2b8a003ed5862647be1a406dc90da93b797eb3e1
 	"private": true,
 	"scripts": {
 		"dev": "npm run pyodide:fetch && vite dev --host",
