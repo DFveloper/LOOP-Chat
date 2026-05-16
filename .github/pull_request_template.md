@@ -1,13 +1,13 @@
 # Pull Request Checklist
 
-### Note to first-time contributors: Please open a discussion post in [Discussions](https://github.com/open-webui/open-webui/discussions) and describe your changes before submitting a pull request.
+### Note to first-time contributors: Please open a discussion post in [Discussions](https://github.com/DFveloper/loop-chat/discussions) and describe your changes before submitting a pull request.
 
 **Before submitting, make sure you've checked the following:**
 
 - [ ] **Target branch:** Please verify that the pull request targets the `dev` branch.
 - [ ] **Description:** Provide a concise description of the changes made in this pull request.
 - [ ] **Changelog:** Ensure a changelog entry following the format of [Keep a Changelog](https://keepachangelog.com/) is added at the bottom of the PR description.
-- [ ] **Documentation:** Have you updated relevant documentation [Open WebUI Docs](https://github.com/open-webui/docs), or other documentation sources?
+- [ ] **Documentation:** Have you updated relevant documentation [LOOP Chat Docs](https://github.com/DFveloper/docs), or other documentation sources?
 - [ ] **Dependencies:** Are there any new dependencies? Have you updated the dependency versions in the documentation?
 - [ ] **Testing:** Have you written and run sufficient tests to validate the changes?
 - [ ] **Code review:** Have you performed a self-review of your code, addressing any coding standard issues and ensuring adherence to the project's coding standards?
@@ -70,3 +70,7 @@
 ### Screenshots or Videos
 
 - [Attach any relevant screenshots or videos demonstrating the changes]
+
+### Contributor License Agreement
+
+By submitting this pull request, I confirm that I have read and fully agree to the [Contributor License Agreement (CLA)](/CONTRIBUTOR_LICENSE_AGREEMENT), and I am providing my contributions under its terms.

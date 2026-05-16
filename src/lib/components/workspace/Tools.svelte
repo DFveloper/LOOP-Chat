@@ -65,9 +65,9 @@
 			return null;
 		});
 
-		toast.success($i18n.t('Redirecting you to Open WebUI Community'));
+		toast.success($i18n.t('Redirecting you to LOOP Chat Community'));
 
-		const url = 'https://openwebui.com';
+		const url = 'https://chat.dfveloper.com';
 
 		const tab = await window.open(`${url}/tools/create`, '_blank');
 
@@ -164,7 +164,7 @@
 
 <svelte:head>
 	<title>
-		{$i18n.t('Tools')} | {$WEBUI_NAME}
+		{$i18n.t('Tools')} • {$WEBUI_NAME}
 	</title>
 </svelte:head>
 
@@ -436,12 +436,12 @@
 	{#if $config?.features.enable_community_sharing}
 		<div class=" my-16">
 			<div class=" text-xl font-medium mb-1 line-clamp-1">
-				{$i18n.t('Made by Open WebUI Community')}
+				{$i18n.t('Made by LOOP Chat Community')}
 			</div>
 
 			<a
 				class=" flex cursor-pointer items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-850 w-full mb-2 px-3.5 py-1.5 rounded-xl transition"
-				href="https://openwebui.com/#open-webui-community"
+				href="https://chat.dfveloper.com/#loop-chat-community"
 				target="_blank"
 			>
 				<div class=" self-center">
@@ -503,7 +503,7 @@
 
 				<ul class=" mt-1 list-disc pl-4 text-xs">
 					<li>
-						{$i18n.t('Tools have a function calling system that allows arbitrary code execution')}.
+						{$i18n.t('Tools have a function calling system that allows arbitrary code execution.')}.
 					</li>
 					<li>{$i18n.t('Do not install tools from sources you do not fully trust.')}</li>
 				</ul>

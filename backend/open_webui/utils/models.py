@@ -5,24 +5,25 @@ import sys
 from aiocache import cached
 from fastapi import Request
 
-from loop_chat.routers import openai, ollama
-from loop_chat.functions import get_function_models
+from open_webui.routers import openai, ollama
+from open_webui.functions import get_function_models
 
 
-from loop_chat.models.functions import Functions
-from loop_chat.models.models import Models
+from open_webui.models.functions import Functions
+from open_webui.models.models import Models
 
 
-from loop_chat.utils.plugin import load_function_module_by_id
-from loop_chat.utils.access_control import has_access
+from open_webui.utils.plugin import load_function_module_by_id
+from open_webui.utils.access_control import has_access
 
 
-from loop_chat.config import (
+from open_webui.config import (
     DEFAULT_ARENA_MODEL,
 )
 
-from loop_chat.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
-from loop_chat.models.users import UserModel
+from open_webui.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
+from open_webui.models.users import UserModel
+
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)
@@ -202,6 +203,7 @@ async def get_all_models(request, user: UserModel = None):
         else:
             function_module, _, _ = load_function_module_by_id(function_id)
             request.app.state.FUNCTIONS[function_id] = function_module
+        return function_module
 
     for model in models:
         action_ids = [

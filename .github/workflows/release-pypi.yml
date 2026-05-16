@@ -2,17 +2,16 @@ name: Release to PyPI
 
 on:
   push:
-    tags:
-      - 'v*'          # v1.0.0, v0.1.2 이런 식으로 태그 달면 publish
-  workflow_dispatch:
-
+    branches:
+      - main # or whatever branch you want to use
+      - pypi-release
 
 jobs:
   release:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/loop_chat
+      url: https://pypi.org/p/loop-chat
     permissions:
       id-token: write
     steps:

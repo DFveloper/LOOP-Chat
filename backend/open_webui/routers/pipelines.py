@@ -18,14 +18,14 @@ from pydantic import BaseModel
 from starlette.responses import FileResponse
 from typing import Optional
 
-from loop_chat.env import SRC_LOG_LEVELS
-from loop_chat.config import CACHE_DIR
-from loop_chat.constants import ERROR_MESSAGES
+from open_webui.env import SRC_LOG_LEVELS
+from open_webui.config import CACHE_DIR
+from open_webui.constants import ERROR_MESSAGES
 
 
-from loop_chat.routers.openai import get_all_models_responses
+from open_webui.routers.openai import get_all_models_responses
 
-from loop_chat.utils.auth import get_admin_user
+from open_webui.utils.auth import get_admin_user
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
@@ -66,7 +66,7 @@ async def process_pipeline_inlet_filter(request, payload, user, models):
     if "pipeline" in model:
         sorted_filters.append(model)
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(trust_env=True) as session:
         for filter in sorted_filters:
             urlIdx = filter.get("urlIdx")
             if urlIdx is None:
@@ -115,7 +115,7 @@ async def process_pipeline_outlet_filter(request, payload, user, models):
     if "pipeline" in model:
         sorted_filters = [model] + sorted_filters
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(trust_env=True) as session:
         for filter in sorted_filters:
             urlIdx = filter.get("urlIdx")
             if urlIdx is None:

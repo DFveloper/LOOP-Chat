@@ -1,7 +1,4 @@
 name: Create and publish Docker images with specific build args
-permissions:
-  contents: read
-  packages: write
 
 on:
   workflow_dispatch:
@@ -59,7 +56,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Docker images
+      - name: Extract metadata for Docker images (default latest tag)
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -70,15 +67,9 @@ jobs:
             type=sha,prefix=git-
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            # nightly/dev용 추가 태그 (branch push일 때만)
-            type=raw,value=nightly,enable=${{ github.ref_type == 'branch' }}
-            # release용 latest는 tag push + semver일 때만 (또는 main 브랜치 태그)
-            type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
           flavor: |
-            # 기본 latest는 끄고 위에서 conditional로 제어
-            latest=false
-            # suffix는 variant별로 이미 잘 붙고 있음
-            
+            latest=${{ github.ref == 'refs/heads/main' }}
+
       - name: Extract metadata for Docker cache
         id: cache-meta
         uses: docker/metadata-action@v5

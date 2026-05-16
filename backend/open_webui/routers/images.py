@@ -10,12 +10,12 @@ from typing import Optional
 
 import requests
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
-from loop_chat.config import CACHE_DIR
-from loop_chat.constants import ERROR_MESSAGES
-from loop_chat.env import ENABLE_FORWARD_USER_INFO_HEADERS, SRC_LOG_LEVELS
-from loop_chat.routers.files import upload_file
-from loop_chat.utils.auth import get_admin_user, get_verified_user
-from loop_chat.utils.images.comfyui import (
+from open_webui.config import CACHE_DIR
+from open_webui.constants import ERROR_MESSAGES
+from open_webui.env import ENABLE_FORWARD_USER_INFO_HEADERS, SRC_LOG_LEVELS
+from open_webui.routers.files import upload_file
+from open_webui.utils.auth import get_admin_user, get_verified_user
+from open_webui.utils.images.comfyui import (
     ComfyUIGenerateImageForm,
     ComfyUIWorkflow,
     comfyui_generate_image,
@@ -482,10 +482,10 @@ async def image_generations(
             headers["Content-Type"] = "application/json"
 
             if ENABLE_FORWARD_USER_INFO_HEADERS:
-                headers["X-OpenWebUI-User-Name"] = user.name
-                headers["X-OpenWebUI-User-Id"] = user.id
-                headers["X-OpenWebUI-User-Email"] = user.email
-                headers["X-OpenWebUI-User-Role"] = user.role
+                headers["X-LOOPChat-User-Name"] = user.name
+                headers["X-LOOPChat-User-Id"] = user.id
+                headers["X-LOOPChat-User-Email"] = user.email
+                headers["X-LOOPChat-User-Role"] = user.role
 
             data = {
                 "model": (
@@ -500,7 +500,11 @@ async def image_generations(
                     if form_data.size
                     else request.app.state.config.IMAGE_SIZE
                 ),
-                "response_format": "b64_json",
+                **(
+                    {}
+                    if "gpt-image-1" in request.app.state.config.IMAGE_GENERATION_MODEL
+                    else {"response_format": "b64_json"}
+                ),
             }
 
             # Use asyncio.to_thread for the requests.post call
@@ -619,7 +623,7 @@ async def image_generations(
             or request.app.state.config.IMAGE_GENERATION_ENGINE == ""
         ):
             if form_data.model:
-                set_image_model(form_data.model)
+                set_image_model(request, form_data.model)
 
             data = {
                 "prompt": form_data.prompt,

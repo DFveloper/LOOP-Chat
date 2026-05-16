@@ -30,7 +30,7 @@ import peewee as pw
 from peewee_migrate import Migrator
 import json
 
-from loop_chat.utils.misc import parse_ollama_modelfile
+from open_webui.utils.misc import parse_ollama_modelfile
 
 with suppress(ImportError):
     import playhouse.postgres_ext as pw_pext

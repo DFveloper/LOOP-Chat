@@ -195,7 +195,7 @@
 </script>
 
 <svelte:head>
-	<title>#{channel?.name ?? 'Channel'} | Open WebUI</title>
+	<title>#{channel?.name ?? 'Channel'} • LOOP Chat</title>
 </svelte:head>
 
 <div
@@ -262,7 +262,7 @@
 			{#if threadId !== null}
 				<Drawer
 					show={threadId !== null}
-					on:close={() => {
+					onClose={() => {
 						threadId = null;
 					}}
 				>

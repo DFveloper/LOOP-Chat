@@ -7,7 +7,7 @@ class TestModels(AbstractPostgresTest):
 
     def setup_class(cls):
         super().setup_class()
-        from loop_chat.models.models import Model
+        from open_webui.models.models import Model
 
         cls.models = Model
 

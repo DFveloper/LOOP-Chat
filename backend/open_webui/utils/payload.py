@@ -1,5 +1,5 @@
-from loop_chat.utils.task import prompt_template, prompt_variables_template
-from loop_chat.utils.misc import (
+from open_webui.utils.task import prompt_template, prompt_variables_template
+from open_webui.utils.misc import (
     add_or_update_system_message,
 )
 
@@ -59,6 +59,7 @@ def apply_model_params_to_body_openai(params: dict, form_data: dict) -> dict:
         "top_p": float,
         "max_tokens": int,
         "frequency_penalty": float,
+        "presence_penalty": float,
         "reasoning_effort": str,
         "seed": lambda x: x,
         "stop": lambda x: [bytes(s, "utf-8").decode("unicode_escape") for s in x],

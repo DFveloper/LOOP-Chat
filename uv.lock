@@ -2809,7 +2809,7 @@ wheels = [
 ]
 
 [[package]]
-name = "open-webui"
+name = "loop-chat"
 version = "0.5.7"
 source = { editable = "." }
 dependencies = [

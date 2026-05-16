@@ -13,10 +13,10 @@ import pytz
 from pytz import UTC
 from typing import Optional, Union, List, Dict
 
-from loop_chat.models.users import Users
+from open_webui.models.users import Users
 
-from loop_chat.constants import ERROR_MESSAGES
-from loop_chat.env import (
+from open_webui.constants import ERROR_MESSAGES
+from open_webui.env import (
     WEBUI_SECRET_KEY,
     TRUSTED_SIGNATURE_KEY,
     STATIC_DIR,
@@ -26,6 +26,7 @@ from loop_chat.env import (
 from fastapi import BackgroundTasks, Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
+
 
 logging.getLogger("passlib").setLevel(logging.ERROR)
 
@@ -73,7 +74,7 @@ def get_license_data(app, key):
     if key:
         try:
             res = requests.post(
-                "https://api.openwebui.com/api/v1/license/",
+                "https://api.chat.dfveloper.com/api/v1/license/",
                 json={"key": key, "version": "1"},
                 timeout=5,
             )

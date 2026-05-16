@@ -16,32 +16,34 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from starlette.background import BackgroundTask
 
-from loop_chat.models.models import Models
-from loop_chat.config import (
+from open_webui.models.models import Models
+from open_webui.config import (
     CACHE_DIR,
 )
-from loop_chat.env import (
+from open_webui.env import (
+    AIOHTTP_CLIENT_SESSION_SSL,
     AIOHTTP_CLIENT_TIMEOUT,
     AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST,
     ENABLE_FORWARD_USER_INFO_HEADERS,
     BYPASS_MODEL_ACCESS_CONTROL,
 )
-from loop_chat.models.users import UserModel
+from open_webui.models.users import UserModel
 
-from loop_chat.constants import ERROR_MESSAGES
-from loop_chat.env import ENV, SRC_LOG_LEVELS
+from open_webui.constants import ERROR_MESSAGES
+from open_webui.env import ENV, SRC_LOG_LEVELS
 
 
-from loop_chat.utils.payload import (
+from open_webui.utils.payload import (
     apply_model_params_to_body_openai,
     apply_model_system_prompt_to_body,
 )
-from loop_chat.utils.misc import (
+from open_webui.utils.misc import (
     convert_logit_bias_input_to_json,
 )
 
-from loop_chat.utils.auth import get_admin_user, get_verified_user
-from loop_chat.utils.access_control import has_access
+from open_webui.utils.auth import get_admin_user, get_verified_user
+from open_webui.utils.access_control import has_access
+
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["OPENAI"])
@@ -64,15 +66,16 @@ async def send_get_request(url, key=None, user: UserModel = None):
                     **({"Authorization": f"Bearer {key}"} if key else {}),
                     **(
                         {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
+                            "X-LOOPChat-User-Name": user.name,
+                            "X-LOOPChat-User-Id": user.id,
+                            "X-LOOPChat-User-Email": user.email,
+                            "X-LOOPChat-User-Role": user.role,
                         }
                         if ENABLE_FORWARD_USER_INFO_HEADERS and user
                         else {}
                     ),
                 },
+                ssl=AIOHTTP_CLIENT_SESSION_SSL,
             ) as response:
                 return await response.json()
     except Exception as e:
@@ -91,20 +94,19 @@ async def cleanup_response(
         await session.close()
 
 
-def openai_o1_o3_handler(payload):
+def openai_o_series_handler(payload):
     """
-    Handle o1, o3 specific parameters
+    Handle "o" series specific parameters
     """
     if "max_tokens" in payload:
-        # Remove "max_tokens" from the payload
+        # Convert "max_tokens" to "max_completion_tokens" for all o-series models
         payload["max_completion_tokens"] = payload["max_tokens"]
         del payload["max_tokens"]
 
-    # Fix: o1 and o3 do not support the "system" role directly.
-    # For older models like "o1-mini" or "o1-preview", use role "user".
-    # For newer o1/o3 models, replace "system" with "developer".
+    # Handle system role conversion based on model type
     if payload["messages"][0]["role"] == "system":
         model_lower = payload["model"].lower()
+        # Legacy models use "user" role instead of "system"
         if model_lower.startswith("o1-mini") or model_lower.startswith("o1-preview"):
             payload["messages"][0]["role"] = "user"
         else:
@@ -215,18 +217,18 @@ async def speech(request: Request, user=Depends(get_verified_user)):
                     "Authorization": f"Bearer {request.app.state.config.OPENAI_API_KEYS[idx]}",
                     **(
                         {
-                            "HTTP-Referer": "https://openwebui.com/",
-                            "X-Title": "Open WebUI",
+                            "HTTP-Referer": "https://chat.dfveloper.com/",
+                            "X-Title": "LOOP Chat",
                         }
                         if "openrouter.ai" in url
                         else {}
                     ),
                     **(
                         {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
+                            "X-LOOPChat-User-Name": user.name,
+                            "X-LOOPChat-User-Id": user.id,
+                            "X-LOOPChat-User-Email": user.email,
+                            "X-LOOPChat-User-Role": user.role,
                         }
                         if ENABLE_FORWARD_USER_INFO_HEADERS
                         else {}
@@ -262,7 +264,7 @@ async def speech(request: Request, user=Depends(get_verified_user)):
 
             raise HTTPException(
                 status_code=r.status_code if r else 500,
-                detail=detail if detail else "Open WebUI: Server Connection Error",
+                detail=detail if detail else "LOOP Chat: Server Connection Error",
             )
 
     except ValueError:
@@ -461,7 +463,8 @@ async def get_models(
 
         r = None
         async with aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST)
+            trust_env=True,
+            timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST),
         ) as session:
             try:
                 async with session.get(
@@ -471,15 +474,16 @@ async def get_models(
                         "Content-Type": "application/json",
                         **(
                             {
-                                "X-OpenWebUI-User-Name": user.name,
-                                "X-OpenWebUI-User-Id": user.id,
-                                "X-OpenWebUI-User-Email": user.email,
-                                "X-OpenWebUI-User-Role": user.role,
+                                "X-LOOPChat-User-Name": user.name,
+                                "X-LOOPChat-User-Id": user.id,
+                                "X-LOOPChat-User-Email": user.email,
+                                "X-LOOPChat-User-Role": user.role,
                             }
                             if ENABLE_FORWARD_USER_INFO_HEADERS
                             else {}
                         ),
                     },
+                    ssl=AIOHTTP_CLIENT_SESSION_SSL,
                 ) as r:
                     if r.status != 200:
                         # Extract response error details if available
@@ -515,7 +519,7 @@ async def get_models(
                 # ClientError covers all aiohttp requests issues
                 log.exception(f"Client error: {str(e)}")
                 raise HTTPException(
-                    status_code=500, detail="Open WebUI: Server Connection Error"
+                    status_code=500, detail="LOOP Chat: Server Connection Error"
                 )
             except Exception as e:
                 log.exception(f"Unexpected error: {e}")
@@ -541,7 +545,8 @@ async def verify_connection(
     key = form_data.key
 
     async with aiohttp.ClientSession(
-        timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST)
+        trust_env=True,
+        timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST),
     ) as session:
         try:
             async with session.get(
@@ -551,15 +556,16 @@ async def verify_connection(
                     "Content-Type": "application/json",
                     **(
                         {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
+                            "X-LOOPChat-User-Name": user.name,
+                            "X-LOOPChat-User-Id": user.id,
+                            "X-LOOPChat-User-Email": user.email,
+                            "X-LOOPChat-User-Role": user.role,
                         }
                         if ENABLE_FORWARD_USER_INFO_HEADERS
                         else {}
                     ),
                 },
+                ssl=AIOHTTP_CLIENT_SESSION_SSL,
             ) as r:
                 if r.status != 200:
                     # Extract response error details if available
@@ -576,7 +582,7 @@ async def verify_connection(
             # ClientError covers all aiohttp requests issues
             log.exception(f"Client error: {str(e)}")
             raise HTTPException(
-                status_code=500, detail="Open WebUI: Server Connection Error"
+                status_code=500, detail="LOOP Chat: Server Connection Error"
             )
         except Exception as e:
             log.exception(f"Unexpected error: {e}")
@@ -665,10 +671,10 @@ async def generate_chat_completion(
     url = request.app.state.config.OPENAI_API_BASE_URLS[idx]
     key = request.app.state.config.OPENAI_API_KEYS[idx]
 
-    # Fix: o1,o3 does not support the "max_tokens" parameter, Modify "max_tokens" to "max_completion_tokens"
-    is_o1_o3 = payload["model"].lower().startswith(("o1", "o3-"))
-    if is_o1_o3:
-        payload = openai_o1_o3_handler(payload)
+    # Check if model is from "o" series
+    is_o_series = payload["model"].lower().startswith(("o1", "o3", "o4"))
+    if is_o_series:
+        payload = openai_o_series_handler(payload)
     elif "api.openai.com" not in url:
         # Remove "max_completion_tokens" from the payload for backward compatibility
         if "max_completion_tokens" in payload:
@@ -705,23 +711,24 @@ async def generate_chat_completion(
                 "Content-Type": "application/json",
                 **(
                     {
-                        "HTTP-Referer": "https://openwebui.com/",
-                        "X-Title": "Open WebUI",
+                        "HTTP-Referer": "https://chat.dfveloper.com/",
+                        "X-Title": "LOOP Chat",
                     }
                     if "openrouter.ai" in url
                     else {}
                 ),
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS
                     else {}
                 ),
             },
+            ssl=AIOHTTP_CLIENT_SESSION_SSL,
         )
 
         # Check if response is SSE
@@ -756,7 +763,7 @@ async def generate_chat_completion(
 
         raise HTTPException(
             status_code=r.status if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
     finally:
         if not streaming and session:
@@ -792,15 +799,16 @@ async def proxy(path: str, request: Request, user=Depends(get_verified_user)):
                 "Content-Type": "application/json",
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS
                     else {}
                 ),
             },
+            ssl=AIOHTTP_CLIENT_SESSION_SSL,
         )
         r.raise_for_status()
 
@@ -833,7 +841,7 @@ async def proxy(path: str, request: Request, user=Depends(get_verified_user)):
                 detail = f"External: {e}"
         raise HTTPException(
             status_code=r.status if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
     finally:
         if not streaming and session:

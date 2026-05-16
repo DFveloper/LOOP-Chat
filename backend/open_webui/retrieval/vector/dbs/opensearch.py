@@ -2,8 +2,13 @@ from opensearchpy import OpenSearch
 from opensearchpy.helpers import bulk
 from typing import Optional
 
-from loop_chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
-from loop_chat.config import (
+from open_webui.retrieval.vector.main import (
+    VectorDBBase,
+    VectorItem,
+    SearchResult,
+    GetResult,
+)
+from open_webui.config import (
     OPENSEARCH_URI,
     OPENSEARCH_SSL,
     OPENSEARCH_CERT_VERIFY,
@@ -12,7 +17,7 @@ from loop_chat.config import (
 )
 
 
-class OpenSearchClient:
+class OpenSearchClient(VectorDBBase):
     def __init__(self):
         self.index_prefix = "open_webui"
         self.client = OpenSearch(

@@ -14,9 +14,9 @@ from urllib.parse import urlparse
 import aiohttp
 from aiocache import cached
 import requests
-from loop_chat.models.users import UserModel
+from open_webui.models.users import UserModel
 
-from loop_chat.env import (
+from open_webui.env import (
     ENABLE_FORWARD_USER_INFO_HEADERS,
 )
 
@@ -35,30 +35,31 @@ from pydantic import BaseModel, ConfigDict, validator
 from starlette.background import BackgroundTask
 
 
-from loop_chat.models.models import Models
-from loop_chat.utils.misc import (
+from open_webui.models.models import Models
+from open_webui.utils.misc import (
     calculate_sha256,
 )
-from loop_chat.utils.payload import (
+from open_webui.utils.payload import (
     apply_model_params_to_body_ollama,
     apply_model_params_to_body_openai,
     apply_model_system_prompt_to_body,
 )
-from loop_chat.utils.auth import get_admin_user, get_verified_user
-from loop_chat.utils.access_control import has_access
+from open_webui.utils.auth import get_admin_user, get_verified_user
+from open_webui.utils.access_control import has_access
 
 
-from loop_chat.config import (
+from open_webui.config import (
     UPLOAD_DIR,
 )
-from loop_chat.env import (
+from open_webui.env import (
     ENV,
     SRC_LOG_LEVELS,
+    AIOHTTP_CLIENT_SESSION_SSL,
     AIOHTTP_CLIENT_TIMEOUT,
     AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST,
     BYPASS_MODEL_ACCESS_CONTROL,
 )
-from loop_chat.constants import ERROR_MESSAGES
+from open_webui.constants import ERROR_MESSAGES
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["OLLAMA"])
@@ -82,15 +83,16 @@ async def send_get_request(url, key=None, user: UserModel = None):
                     **({"Authorization": f"Bearer {key}"} if key else {}),
                     **(
                         {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
+                            "X-LOOPChat-User-Name": user.name,
+                            "X-LOOPChat-User-Id": user.id,
+                            "X-LOOPChat-User-Email": user.email,
+                            "X-LOOPChat-User-Role": user.role,
                         }
                         if ENABLE_FORWARD_USER_INFO_HEADERS and user
                         else {}
                     ),
                 },
+                ssl=AIOHTTP_CLIENT_SESSION_SSL,
             ) as response:
                 return await response.json()
     except Exception as e:
@@ -132,15 +134,16 @@ async def send_post_request(
                 **({"Authorization": f"Bearer {key}"} if key else {}),
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS and user
                     else {}
                 ),
             },
+            ssl=AIOHTTP_CLIENT_SESSION_SSL,
         )
         r.raise_for_status()
 
@@ -176,7 +179,7 @@ async def send_post_request(
 
         raise HTTPException(
             status_code=r.status if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
 
 
@@ -216,7 +219,8 @@ async def verify_connection(
     key = form_data.key
 
     async with aiohttp.ClientSession(
-        timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST)
+        trust_env=True,
+        timeout=aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST),
     ) as session:
         try:
             async with session.get(
@@ -225,15 +229,16 @@ async def verify_connection(
                     **({"Authorization": f"Bearer {key}"} if key else {}),
                     **(
                         {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
+                            "X-LOOPChat-User-Name": user.name,
+                            "X-LOOPChat-User-Id": user.id,
+                            "X-LOOPChat-User-Email": user.email,
+                            "X-LOOPChat-User-Role": user.role,
                         }
                         if ENABLE_FORWARD_USER_INFO_HEADERS and user
                         else {}
                     ),
                 },
+                ssl=AIOHTTP_CLIENT_SESSION_SSL,
             ) as r:
                 if r.status != 200:
                     detail = f"HTTP Error: {r.status}"
@@ -248,7 +253,7 @@ async def verify_connection(
         except aiohttp.ClientError as e:
             log.exception(f"Client error: {str(e)}")
             raise HTTPException(
-                status_code=500, detail="Open WebUI: Server Connection Error"
+                status_code=500, detail="LOOP Chat: Server Connection Error"
             )
         except Exception as e:
             log.exception(f"Unexpected error: {e}")
@@ -423,10 +428,10 @@ async def get_ollama_tags(
                     **({"Authorization": f"Bearer {key}"} if key else {}),
                     **(
                         {
-                            "X-OpenWebUI-User-Name": user.name,
-                            "X-OpenWebUI-User-Id": user.id,
-                            "X-OpenWebUI-User-Email": user.email,
-                            "X-OpenWebUI-User-Role": user.role,
+                            "X-LOOPChat-User-Name": user.name,
+                            "X-LOOPChat-User-Id": user.id,
+                            "X-LOOPChat-User-Email": user.email,
+                            "X-LOOPChat-User-Role": user.role,
                         }
                         if ENABLE_FORWARD_USER_INFO_HEADERS and user
                         else {}
@@ -450,7 +455,7 @@ async def get_ollama_tags(
 
             raise HTTPException(
                 status_code=r.status_code if r else 500,
-                detail=detail if detail else "Open WebUI: Server Connection Error",
+                detail=detail if detail else "LOOP Chat: Server Connection Error",
             )
 
     if user.role == "user" and not BYPASS_MODEL_ACCESS_CONTROL:
@@ -526,7 +531,7 @@ async def get_ollama_versions(request: Request, url_idx: Optional[int] = None):
 
                 raise HTTPException(
                     status_code=r.status_code if r else 500,
-                    detail=detail if detail else "Open WebUI: Server Connection Error",
+                    detail=detail if detail else "LOOP Chat: Server Connection Error",
                 )
     else:
         return {"version": False}
@@ -685,10 +690,10 @@ async def copy_model(
                 **({"Authorization": f"Bearer {key}"} if key else {}),
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS and user
                     else {}
@@ -714,7 +719,7 @@ async def copy_model(
 
         raise HTTPException(
             status_code=r.status_code if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
 
 
@@ -751,10 +756,10 @@ async def delete_model(
                 **({"Authorization": f"Bearer {key}"} if key else {}),
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS and user
                     else {}
@@ -779,7 +784,7 @@ async def delete_model(
 
         raise HTTPException(
             status_code=r.status_code if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
 
 
@@ -810,10 +815,10 @@ async def show_model_info(
                 **({"Authorization": f"Bearer {key}"} if key else {}),
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS and user
                     else {}
@@ -838,7 +843,7 @@ async def show_model_info(
 
         raise HTTPException(
             status_code=r.status_code if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
 
 
@@ -878,7 +883,15 @@ async def embed(
             )
 
     url = request.app.state.config.OLLAMA_BASE_URLS[url_idx]
+    api_config = request.app.state.config.OLLAMA_API_CONFIGS.get(
+        str(url_idx),
+        request.app.state.config.OLLAMA_API_CONFIGS.get(url, {}),  # Legacy support
+    )
     key = get_api_key(url_idx, url, request.app.state.config.OLLAMA_API_CONFIGS)
+
+    prefix_id = api_config.get("prefix_id", None)
+    if prefix_id:
+        form_data.model = form_data.model.replace(f"{prefix_id}.", "")
 
     try:
         r = requests.request(
@@ -889,10 +902,10 @@ async def embed(
                 **({"Authorization": f"Bearer {key}"} if key else {}),
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS and user
                     else {}
@@ -918,7 +931,7 @@ async def embed(
 
         raise HTTPException(
             status_code=r.status_code if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
 
 
@@ -957,7 +970,15 @@ async def embeddings(
             )
 
     url = request.app.state.config.OLLAMA_BASE_URLS[url_idx]
+    api_config = request.app.state.config.OLLAMA_API_CONFIGS.get(
+        str(url_idx),
+        request.app.state.config.OLLAMA_API_CONFIGS.get(url, {}),  # Legacy support
+    )
     key = get_api_key(url_idx, url, request.app.state.config.OLLAMA_API_CONFIGS)
+
+    prefix_id = api_config.get("prefix_id", None)
+    if prefix_id:
+        form_data.model = form_data.model.replace(f"{prefix_id}.", "")
 
     try:
         r = requests.request(
@@ -968,10 +989,10 @@ async def embeddings(
                 **({"Authorization": f"Bearer {key}"} if key else {}),
                 **(
                     {
-                        "X-OpenWebUI-User-Name": user.name,
-                        "X-OpenWebUI-User-Id": user.id,
-                        "X-OpenWebUI-User-Email": user.email,
-                        "X-OpenWebUI-User-Role": user.role,
+                        "X-LOOPChat-User-Name": user.name,
+                        "X-LOOPChat-User-Id": user.id,
+                        "X-LOOPChat-User-Email": user.email,
+                        "X-LOOPChat-User-Role": user.role,
                     }
                     if ENABLE_FORWARD_USER_INFO_HEADERS and user
                     else {}
@@ -997,7 +1018,7 @@ async def embeddings(
 
         raise HTTPException(
             status_code=r.status_code if r else 500,
-            detail=detail if detail else "Open WebUI: Server Connection Error",
+            detail=detail if detail else "LOOP Chat: Server Connection Error",
         )
 
 
@@ -1006,7 +1027,7 @@ class GenerateCompletionForm(BaseModel):
     prompt: str
     suffix: Optional[str] = None
     images: Optional[list[str]] = None
-    format: Optional[str] = None
+    format: Optional[Union[dict, str]] = None
     options: Optional[dict] = None
     system: Optional[str] = None
     template: Optional[str] = None
@@ -1411,7 +1432,7 @@ async def get_openai_models(
             ]
         except Exception as e:
             log.exception(e)
-            error_detail = "Open WebUI: Server Connection Error"
+            error_detail = "LOOP Chat: Server Connection Error"
             if r is not None:
                 try:
                     res = r.json()
@@ -1482,7 +1503,9 @@ async def download_file_stream(
     timeout = aiohttp.ClientTimeout(total=600)  # Set the timeout
 
     async with aiohttp.ClientSession(timeout=timeout, trust_env=True) as session:
-        async with session.get(file_url, headers=headers) as response:
+        async with session.get(
+            file_url, headers=headers, ssl=AIOHTTP_CLIENT_SESSION_SSL
+        ) as response:
             total_size = int(response.headers.get("content-length", 0)) + current_size
 
             with open(file_path, "ab+") as file:
@@ -1497,7 +1520,8 @@ async def download_file_stream(
 
                 if done:
                     file.seek(0)
-                    hashed = calculate_sha256(file)
+                    chunk_size = 1024 * 1024 * 2
+                    hashed = calculate_sha256(file, chunk_size)
                     file.seek(0)
 
                     url = f"{ollama_url}/api/blobs/sha256:{hashed}"

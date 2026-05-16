@@ -9,8 +9,8 @@ from markdown import markdown
 import site
 from fpdf import FPDF
 
-from loop_chat.env import STATIC_DIR, FONTS_DIR
-from loop_chat.models.chats import ChatTitleMessagesForm
+from open_webui.env import STATIC_DIR, FONTS_DIR
+from open_webui.models.chats import ChatTitleMessagesForm
 
 
 class PDFGenerator:
@@ -108,7 +108,7 @@ class PDFGenerator:
             if not FONTS_DIR.exists():
                 FONTS_DIR = Path(site.getsitepackages()[0]) / "static/fonts"
             # When running using `pip install -e .` the static directory is in the site packages.
-            # This path only works if `open-webui serve` is run from the root of this project.
+            # This path only works if `loop-chat serve` is run from the root of this project.
             if not FONTS_DIR.exists():
                 FONTS_DIR = Path(".") / "backend" / "static" / "fonts"
 

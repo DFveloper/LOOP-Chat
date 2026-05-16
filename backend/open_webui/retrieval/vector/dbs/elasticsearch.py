@@ -2,8 +2,13 @@ from elasticsearch import Elasticsearch, BadRequestError
 from typing import Optional
 import ssl
 from elasticsearch.helpers import bulk, scan
-from loop_chat.retrieval.vector.main import VectorItem, SearchResult, GetResult
-from loop_chat.config import (
+from open_webui.retrieval.vector.main import (
+    VectorDBBase,
+    VectorItem,
+    SearchResult,
+    GetResult,
+)
+from open_webui.config import (
     ELASTICSEARCH_URL,
     ELASTICSEARCH_CA_CERTS,
     ELASTICSEARCH_API_KEY,
@@ -15,7 +20,7 @@ from loop_chat.config import (
 )
 
 
-class ElasticsearchClient:
+class ElasticsearchClient(VectorDBBase):
     """
     Important:
     in order to reduce the number of indexes and since the embedding vector length is fixed, we avoid creating

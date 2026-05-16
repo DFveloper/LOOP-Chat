@@ -2,8 +2,8 @@ import logging
 from typing import Optional
 
 import requests
-from loop_chat.retrieval.web.main import SearchResult, get_filtered_results
-from loop_chat.env import SRC_LOG_LEVELS
+from open_webui.retrieval.web.main import SearchResult, get_filtered_results
+from open_webui.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["RAG"])
@@ -67,7 +67,7 @@ def search_searxng(
     response = requests.get(
         query_url,
         headers={
-            "User-Agent": "Open WebUI (https://github.com/open-webui/open-webui) RAG Bot",
+            "User-Agent": "LOOP Chat (https://github.com/DFveloper/loop-chat) RAG Bot",
             "Accept": "text/html",
             "Accept-Encoding": "gzip, deflate",
             "Accept-Language": "en-US,en;q=0.5",

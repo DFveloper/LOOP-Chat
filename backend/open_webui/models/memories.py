@@ -2,7 +2,7 @@ import time
 import uuid
 from typing import Optional
 
-from loop_chat.internal.db import Base, get_db
+from open_webui.internal.db import Base, get_db
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Column, String, Text
 

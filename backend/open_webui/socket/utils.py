@@ -1,6 +1,6 @@
 import json
 import uuid
-from loop_chat.utils.redis import get_redis_connection
+from open_webui.utils.redis import get_redis_connection
 
 
 class RedisLock:

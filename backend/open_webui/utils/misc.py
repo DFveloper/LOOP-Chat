@@ -10,7 +10,7 @@ import json
 
 
 import collections.abc
-from loop_chat.env import SRC_LOG_LEVELS
+from open_webui.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

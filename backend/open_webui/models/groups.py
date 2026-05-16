@@ -4,14 +4,15 @@ import time
 from typing import Optional
 import uuid
 
-from loop_chat.internal.db import Base, get_db
-from loop_chat.env import SRC_LOG_LEVELS
+from open_webui.internal.db import Base, get_db
+from open_webui.env import SRC_LOG_LEVELS
 
-from loop_chat.models.files import FileMetadataResponse
+from open_webui.models.files import FileMetadataResponse
 
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Column, String, Text, JSON, func
+
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])

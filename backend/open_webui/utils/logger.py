@@ -5,12 +5,13 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from loop_chat.env import (
+from open_webui.env import (
     AUDIT_LOG_FILE_ROTATION_SIZE,
     AUDIT_LOG_LEVEL,
     AUDIT_LOGS_FILE_PATH,
     GLOBAL_LOG_LEVEL,
 )
+
 
 if TYPE_CHECKING:
     from loguru import Record

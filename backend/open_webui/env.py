@@ -9,7 +9,7 @@ from pathlib import Path
 
 import markdown
 from bs4 import BeautifulSoup
-from loop_chat.constants import ERROR_MESSAGES
+from open_webui.constants import ERROR_MESSAGES
 
 ####################################
 # Load .env file
@@ -107,9 +107,9 @@ log.setLevel(SRC_LOG_LEVELS["CONFIG"])
 
 WEBUI_NAME = os.environ.get("WEBUI_NAME", "LOOP Chat")
 if WEBUI_NAME != "LOOP Chat":
-    WEBUI_NAME += " (Based on LOOP Chat)"
+    WEBUI_NAME += " (LOOP Chat)"
 
-WEBUI_FAVICON_URL = "https://openwebui.com/favicon.png"
+WEBUI_FAVICON_URL = "https://chat.dfveloper.com/favicon.png"
 
 TRUSTED_SIGNATURE_KEY = os.environ.get("TRUSTED_SIGNATURE_KEY", "")
 
@@ -122,7 +122,7 @@ ENV = os.environ.get("ENV", "dev")
 FROM_INIT_PY = os.environ.get("FROM_INIT_PY", "False").lower() == "true"
 
 if FROM_INIT_PY:
-    PACKAGE_DATA = {"version": importlib.metadata.version("open-webui")}
+    PACKAGE_DATA = {"version": importlib.metadata.version("loop-chat")}
 else:
     try:
         PACKAGE_DATA = json.loads((BASE_DIR / "package.json").read_text())
@@ -354,6 +354,10 @@ BYPASS_MODEL_ACCESS_CONTROL = (
     os.environ.get("BYPASS_MODEL_ACCESS_CONTROL", "False").lower() == "true"
 )
 
+WEBUI_AUTH_SIGNOUT_REDIRECT_URL = os.environ.get(
+    "WEBUI_AUTH_SIGNOUT_REDIRECT_URL", None
+)
+
 ####################################
 # WEBUI_SECRET_KEY
 ####################################
@@ -409,6 +413,11 @@ else:
     except Exception:
         AIOHTTP_CLIENT_TIMEOUT = 300
 
+
+AIOHTTP_CLIENT_SESSION_SSL = (
+    os.environ.get("AIOHTTP_CLIENT_SESSION_SSL", "True").lower() == "true"
+)
+
 AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST = os.environ.get(
     "AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST",
     os.environ.get("AIOHTTP_CLIENT_TIMEOUT_OPENAI_MODEL_LIST", "10"),
@@ -437,6 +446,56 @@ else:
     except Exception:
         AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA = 10
 
+
+AIOHTTP_CLIENT_SESSION_TOOL_SERVER_SSL = (
+    os.environ.get("AIOHTTP_CLIENT_SESSION_TOOL_SERVER_SSL", "True").lower() == "true"
+)
+
+
+####################################
+# SENTENCE TRANSFORMERS
+####################################
+
+
+SENTENCE_TRANSFORMERS_BACKEND = os.environ.get("SENTENCE_TRANSFORMERS_BACKEND", "")
+if SENTENCE_TRANSFORMERS_BACKEND == "":
+    SENTENCE_TRANSFORMERS_BACKEND = "torch"
+
+
+SENTENCE_TRANSFORMERS_MODEL_KWARGS = os.environ.get(
+    "SENTENCE_TRANSFORMERS_MODEL_KWARGS", ""
+)
+if SENTENCE_TRANSFORMERS_MODEL_KWARGS == "":
+    SENTENCE_TRANSFORMERS_MODEL_KWARGS = None
+else:
+    try:
+        SENTENCE_TRANSFORMERS_MODEL_KWARGS = json.loads(
+            SENTENCE_TRANSFORMERS_MODEL_KWARGS
+        )
+    except Exception:
+        SENTENCE_TRANSFORMERS_MODEL_KWARGS = None
+
+
+SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND = os.environ.get(
+    "SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND", ""
+)
+if SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND == "":
+    SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND = "torch"
+
+
+SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = os.environ.get(
+    "SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS", ""
+)
+if SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS == "":
+    SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = None
+else:
+    try:
+        SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = json.loads(
+            SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS
+        )
+    except Exception:
+        SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = None
+
 ####################################
 # OFFLINE_MODE
 ####################################
@@ -445,6 +504,7 @@ OFFLINE_MODE = os.environ.get("OFFLINE_MODE", "false").lower() == "true"
 
 if OFFLINE_MODE:
     os.environ["HF_HUB_OFFLINE"] = "1"
+
 
 ####################################
 # AUDIT LOGGING
@@ -467,6 +527,7 @@ AUDIT_EXCLUDED_PATHS = os.getenv("AUDIT_EXCLUDED_PATHS", "/chats,/chat,/folders"
 AUDIT_EXCLUDED_PATHS = [path.strip() for path in AUDIT_EXCLUDED_PATHS]
 AUDIT_EXCLUDED_PATHS = [path.lstrip("/") for path in AUDIT_EXCLUDED_PATHS]
 
+
 ####################################
 # OPENTELEMETRY
 ####################################
@@ -475,7 +536,7 @@ ENABLE_OTEL = os.environ.get("ENABLE_OTEL", "False").lower() == "true"
 OTEL_EXPORTER_OTLP_ENDPOINT = os.environ.get(
     "OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317"
 )
-OTEL_SERVICE_NAME = os.environ.get("OTEL_SERVICE_NAME", "open-webui")
+OTEL_SERVICE_NAME = os.environ.get("OTEL_SERVICE_NAME", "loop-chat")
 OTEL_RESOURCE_ATTRIBUTES = os.environ.get(
     "OTEL_RESOURCE_ATTRIBUTES", ""
 )  # e.g. key1=val1,key2=val2

@@ -37,6 +37,7 @@
 	export let imageGenerationEnabled = false;
 	export let codeInterpreterEnabled = false;
 	export let webSearchEnabled = false;
+	export let thinkingEnabled = false;
 
 	export let toolServers = [];
 
@@ -169,7 +170,7 @@
 								By
 								{#if models[selectedModelIdx]?.info?.meta?.user.community}
 									<a
-										href="https://openwebui.com/m/{models[selectedModelIdx]?.info?.meta?.user
+										href="https://chat.dfveloper.com/m/{models[selectedModelIdx]?.info?.meta?.user
 											.username}"
 										>{models[selectedModelIdx]?.info?.meta?.user.name
 											? models[selectedModelIdx]?.info?.meta?.user.name
@@ -195,12 +196,20 @@
 					bind:imageGenerationEnabled
 					bind:codeInterpreterEnabled
 					bind:webSearchEnabled
+					bind:thinkingEnabled
 					bind:atSelectedModel
 					{toolServers}
 					{transparentBackground}
 					{stopResponse}
 					{createMessagePair}
 					placeholder={$i18n.t('How can I help you today?')}
+					onChange={(input) => {
+						if (input.prompt !== null) {
+							localStorage.setItem(`chat-input`, JSON.stringify(input));
+						} else {
+							localStorage.removeItem(`chat-input`);
+						}
+					}}
 					on:upload={(e) => {
 						dispatch('upload', e.detail);
 					}}

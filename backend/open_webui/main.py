@@ -17,6 +17,7 @@ from sqlalchemy import text
 from typing import Optional
 from aiocache import cached
 import aiohttp
+import anyio.to_thread
 import requests
 
 
@@ -45,14 +46,14 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import Response, StreamingResponse
 
 
-from loop_chat.utils import logger
-from loop_chat.utils.audit import AuditLevel, AuditLoggingMiddleware
-from loop_chat.utils.logger import start_logger
-from loop_chat.socket.main import (
+from open_webui.utils import logger
+from open_webui.utils.audit import AuditLevel, AuditLoggingMiddleware
+from open_webui.utils.logger import start_logger
+from open_webui.socket.main import (
     app as socket_app,
     periodic_usage_pool_cleanup,
 )
-from loop_chat.routers import (
+from open_webui.routers import (
     audio,
     images,
     ollama,
@@ -63,6 +64,7 @@ from loop_chat.routers import (
     auths,
     channels,
     chats,
+    notes,
     folders,
     configs,
     groups,
@@ -78,20 +80,20 @@ from loop_chat.routers import (
     utils,
 )
 
-from loop_chat.routers.retrieval import (
+from open_webui.routers.retrieval import (
     get_embedding_function,
     get_ef,
     get_rf,
 )
 
-from loop_chat.internal.db import Session, engine
+from open_webui.internal.db import Session, engine
 
-from loop_chat.models.functions import Functions
-from loop_chat.models.models import Models
-from loop_chat.models.users import UserModel, Users
-from loop_chat.models.chats import Chats
+from open_webui.models.functions import Functions
+from open_webui.models.models import Models
+from open_webui.models.users import UserModel, Users
+from open_webui.models.chats import Chats
 
-from loop_chat.config import (
+from open_webui.config import (
     LICENSE_KEY,
     # Ollama
     ENABLE_OLLAMA_API,
@@ -100,11 +102,15 @@ from loop_chat.config import (
     # OpenAI
     ENABLE_OPENAI_API,
     ONEDRIVE_CLIENT_ID,
+    ONEDRIVE_SHAREPOINT_URL,
+    ONEDRIVE_SHAREPOINT_TENANT_ID,
     OPENAI_API_BASE_URLS,
     OPENAI_API_KEYS,
     OPENAI_API_CONFIGS,
     # Direct Connections
     ENABLE_DIRECT_CONNECTIONS,
+    # Thread pool size for FastAPI/AnyIO
+    THREAD_POOL_SIZE,
     # Tool Server Configs
     TOOL_SERVER_CONNECTIONS,
     # Code Execution
@@ -151,6 +157,8 @@ from loop_chat.config import (
     AUDIO_STT_AZURE_API_KEY,
     AUDIO_STT_AZURE_REGION,
     AUDIO_STT_AZURE_LOCALES,
+    AUDIO_STT_AZURE_BASE_URL,
+    AUDIO_STT_AZURE_MAX_SPEAKERS,
     AUDIO_TTS_API_KEY,
     AUDIO_TTS_ENGINE,
     AUDIO_TTS_MODEL,
@@ -159,6 +167,7 @@ from loop_chat.config import (
     AUDIO_TTS_SPLIT_ON,
     AUDIO_TTS_VOICE,
     AUDIO_TTS_AZURE_SPEECH_REGION,
+    AUDIO_TTS_AZURE_SPEECH_BASE_URL,
     AUDIO_TTS_AZURE_SPEECH_OUTPUT_FORMAT,
     PLAYWRIGHT_WS_URL,
     PLAYWRIGHT_TIMEOUT,
@@ -167,6 +176,7 @@ from loop_chat.config import (
     WEB_LOADER_ENGINE,
     WHISPER_MODEL,
     WHISPER_VAD_FILTER,
+    WHISPER_LANGUAGE,
     DEEPGRAM_API_KEY,
     WHISPER_MODEL_AUTO_UPDATE,
     WHISPER_MODEL_DIR,
@@ -178,7 +188,10 @@ from loop_chat.config import (
     RAG_EMBEDDING_MODEL,
     RAG_EMBEDDING_MODEL_AUTO_UPDATE,
     RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE,
+    RAG_RERANKING_ENGINE,
     RAG_RERANKING_MODEL,
+    RAG_EXTERNAL_RERANKER_URL,
+    RAG_EXTERNAL_RERANKER_API_KEY,
     RAG_RERANKING_MODEL_AUTO_UPDATE,
     RAG_RERANKING_MODEL_TRUST_REMOTE_CODE,
     RAG_EMBEDDING_ENGINE,
@@ -195,6 +208,8 @@ from loop_chat.config import (
     CONTENT_EXTRACTION_ENGINE,
     TIKA_SERVER_URL,
     DOCLING_SERVER_URL,
+    DOCLING_OCR_ENGINE,
+    DOCLING_OCR_LANG,
     DOCUMENT_INTELLIGENCE_ENDPOINT,
     DOCUMENT_INTELLIGENCE_KEY,
     MISTRAL_OCR_API_KEY,
@@ -219,6 +234,9 @@ from loop_chat.config import (
     SERPAPI_API_KEY,
     SERPAPI_ENGINE,
     SEARXNG_QUERY_URL,
+    YACY_QUERY_URL,
+    YACY_USERNAME,
+    YACY_PASSWORD,
     SERPER_API_KEY,
     SERPLY_API_KEY,
     SERPSTACK_API_KEY,
@@ -240,12 +258,18 @@ from loop_chat.config import (
     GOOGLE_DRIVE_CLIENT_ID,
     GOOGLE_DRIVE_API_KEY,
     ONEDRIVE_CLIENT_ID,
+    ONEDRIVE_SHAREPOINT_URL,
+    ONEDRIVE_SHAREPOINT_TENANT_ID,
     ENABLE_RAG_HYBRID_SEARCH,
     ENABLE_RAG_LOCAL_WEB_FETCH,
     ENABLE_WEB_LOADER_SSL_VERIFICATION,
     ENABLE_GOOGLE_DRIVE_INTEGRATION,
     ENABLE_ONEDRIVE_INTEGRATION,
     UPLOAD_DIR,
+    EXTERNAL_WEB_SEARCH_URL,
+    EXTERNAL_WEB_SEARCH_API_KEY,
+    EXTERNAL_WEB_LOADER_URL,
+    EXTERNAL_WEB_LOADER_API_KEY,
     # WebUI
     WEBUI_AUTH,
     WEBUI_NAME,
@@ -260,6 +284,7 @@ from loop_chat.config import (
     ENABLE_API_KEY_ENDPOINT_RESTRICTIONS,
     API_KEY_ALLOWED_ENDPOINTS,
     ENABLE_CHANNELS,
+    ENABLE_NOTES,
     ENABLE_COMMUNITY_SHARING,
     ENABLE_MESSAGE_RATING,
     ENABLE_USER_WEBHOOKS,
@@ -323,7 +348,7 @@ from loop_chat.config import (
     AppConfig,
     reset_config,
 )
-from loop_chat.env import (
+from open_webui.env import (
     AUDIT_EXCLUDED_PATHS,
     AUDIT_LOG_LEVEL,
     CHANGELOG,
@@ -341,6 +366,7 @@ from loop_chat.env import (
     WEBUI_SESSION_COOKIE_SECURE,
     WEBUI_AUTH_TRUSTED_EMAIL_HEADER,
     WEBUI_AUTH_TRUSTED_NAME_HEADER,
+    WEBUI_AUTH_SIGNOUT_REDIRECT_URL,
     ENABLE_WEBSOCKET_SUPPORT,
     BYPASS_MODEL_ACCESS_CONTROL,
     RESET_CONFIG_ON_START,
@@ -350,36 +376,38 @@ from loop_chat.env import (
 )
 
 
-from loop_chat.utils.models import (
+from open_webui.utils.models import (
     get_all_models,
     get_all_base_models,
     check_model_access,
 )
-from loop_chat.utils.chat import (
+from open_webui.utils.chat import (
     generate_chat_completion as chat_completion_handler,
     chat_completed as chat_completed_handler,
     chat_action as chat_action_handler,
 )
-from loop_chat.utils.middleware import process_chat_payload, process_chat_response
-from loop_chat.utils.access_control import has_access
+from open_webui.utils.middleware import process_chat_payload, process_chat_response
+from open_webui.utils.access_control import has_access
 
-from loop_chat.utils.auth import (
+from open_webui.utils.auth import (
     get_license_data,
     get_http_authorization_cred,
     decode_token,
     get_admin_user,
     get_verified_user,
 )
-from loop_chat.utils.oauth import OAuthManager
-from loop_chat.utils.security_headers import SecurityHeadersMiddleware
+from open_webui.utils.plugin import install_tool_and_function_dependencies
+from open_webui.utils.oauth import OAuthManager
+from open_webui.utils.security_headers import SecurityHeadersMiddleware
 
-from loop_chat.tasks import (
+from open_webui.tasks import (
     list_task_ids_by_chat_id,
     stop_task,
     list_tasks,
 )  # Import from tasks.py
 
-from loop_chat.utils.redis import get_sentinels_from_env
+from open_webui.utils.redis import get_sentinels_from_env
+
 
 if SAFE_MODE:
     print("SAFE MODE ENABLED")
@@ -405,7 +433,8 @@ class SPAStaticFiles(StaticFiles):
                 raise ex
 
 
-print(rf"""
+print(
+    rf"""
  ██████╗ ██████╗ ███████╗███╗   ██╗    ██╗    ██╗███████╗██████╗ ██╗   ██╗██╗
 ██╔═══██╗██╔══██╗██╔════╝████╗  ██║    ██║    ██║██╔════╝██╔══██╗██║   ██║██║
 ██║   ██║██████╔╝█████╗  ██╔██╗ ██║    ██║ █╗ ██║█████╗  ██████╔╝██║   ██║██║
@@ -414,10 +443,11 @@ print(rf"""
  ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝     ╚══╝╚══╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝
 
 
-v{VERSION} - building the best open-source AI user interface.
+v{VERSION} - building the best AI user interface.
 {f"Commit: {WEBUI_BUILD_HASH}" if WEBUI_BUILD_HASH != "dev-build" else ""}
-https://github.com/open-webui/open-webui
-""")
+https://github.com/DFveloper/loop-chat
+"""
+)
 
 
 @asynccontextmanager
@@ -429,12 +459,22 @@ async def lifespan(app: FastAPI):
     if LICENSE_KEY:
         get_license_data(app, LICENSE_KEY)
 
+    # This should be blocking (sync) so functions are not deactivated on first /get_models calls
+    # when the first user lands on the / route.
+    log.info("Installing external dependencies of functions and tools...")
+    install_tool_and_function_dependencies()
+
+    if THREAD_POOL_SIZE and THREAD_POOL_SIZE > 0:
+        limiter = anyio.to_thread.current_default_thread_limiter()
+        limiter.total_tokens = THREAD_POOL_SIZE
+
     asyncio.create_task(periodic_usage_pool_cleanup())
+
     yield
 
 
 app = FastAPI(
-    title="Open WebUI",
+    title="LOOP Chat",
     docs_url="/docs" if ENV == "dev" else None,
     openapi_url="/openapi.json" if ENV == "dev" else None,
     redoc_url=None,
@@ -459,7 +499,7 @@ app.state.LICENSE_METADATA = None
 ########################################
 
 if ENABLE_OTEL:
-    from loop_chat.utils.telemetry.setup import setup as setup_opentelemetry
+    from open_webui.utils.telemetry.setup import setup as setup_opentelemetry
 
     setup_opentelemetry(app=app, db_engine=engine)
 
@@ -540,6 +580,7 @@ app.state.config.MODEL_ORDER_LIST = MODEL_ORDER_LIST
 
 
 app.state.config.ENABLE_CHANNELS = ENABLE_CHANNELS
+app.state.config.ENABLE_NOTES = ENABLE_NOTES
 app.state.config.ENABLE_COMMUNITY_SHARING = ENABLE_COMMUNITY_SHARING
 app.state.config.ENABLE_MESSAGE_RATING = ENABLE_MESSAGE_RATING
 app.state.config.ENABLE_USER_WEBHOOKS = ENABLE_USER_WEBHOOKS
@@ -573,6 +614,7 @@ app.state.config.LDAP_CIPHERS = LDAP_CIPHERS
 
 app.state.AUTH_TRUSTED_EMAIL_HEADER = WEBUI_AUTH_TRUSTED_EMAIL_HEADER
 app.state.AUTH_TRUSTED_NAME_HEADER = WEBUI_AUTH_TRUSTED_NAME_HEADER
+app.state.WEBUI_AUTH_SIGNOUT_REDIRECT_URL = WEBUI_AUTH_SIGNOUT_REDIRECT_URL
 app.state.EXTERNAL_PWA_MANIFEST_URL = EXTERNAL_PWA_MANIFEST_URL
 
 app.state.USER_COUNT = None
@@ -601,6 +643,8 @@ app.state.config.ENABLE_WEB_LOADER_SSL_VERIFICATION = ENABLE_WEB_LOADER_SSL_VERI
 app.state.config.CONTENT_EXTRACTION_ENGINE = CONTENT_EXTRACTION_ENGINE
 app.state.config.TIKA_SERVER_URL = TIKA_SERVER_URL
 app.state.config.DOCLING_SERVER_URL = DOCLING_SERVER_URL
+app.state.config.DOCLING_OCR_ENGINE = DOCLING_OCR_ENGINE
+app.state.config.DOCLING_OCR_LANG = DOCLING_OCR_LANG
 app.state.config.DOCUMENT_INTELLIGENCE_ENDPOINT = DOCUMENT_INTELLIGENCE_ENDPOINT
 app.state.config.DOCUMENT_INTELLIGENCE_KEY = DOCUMENT_INTELLIGENCE_KEY
 app.state.config.MISTRAL_OCR_API_KEY = MISTRAL_OCR_API_KEY
@@ -614,7 +658,12 @@ app.state.config.CHUNK_OVERLAP = CHUNK_OVERLAP
 app.state.config.RAG_EMBEDDING_ENGINE = RAG_EMBEDDING_ENGINE
 app.state.config.RAG_EMBEDDING_MODEL = RAG_EMBEDDING_MODEL
 app.state.config.RAG_EMBEDDING_BATCH_SIZE = RAG_EMBEDDING_BATCH_SIZE
+
+app.state.config.RAG_RERANKING_ENGINE = RAG_RERANKING_ENGINE
 app.state.config.RAG_RERANKING_MODEL = RAG_RERANKING_MODEL
+app.state.config.RAG_EXTERNAL_RERANKER_URL = RAG_EXTERNAL_RERANKER_URL
+app.state.config.RAG_EXTERNAL_RERANKER_API_KEY = RAG_EXTERNAL_RERANKER_API_KEY
+
 app.state.config.RAG_TEMPLATE = RAG_TEMPLATE
 
 app.state.config.RAG_OPENAI_API_BASE_URL = RAG_OPENAI_API_BASE_URL
@@ -643,6 +692,9 @@ app.state.config.BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL = (
 app.state.config.ENABLE_GOOGLE_DRIVE_INTEGRATION = ENABLE_GOOGLE_DRIVE_INTEGRATION
 app.state.config.ENABLE_ONEDRIVE_INTEGRATION = ENABLE_ONEDRIVE_INTEGRATION
 app.state.config.SEARXNG_QUERY_URL = SEARXNG_QUERY_URL
+app.state.config.YACY_QUERY_URL = YACY_QUERY_URL
+app.state.config.YACY_USERNAME = YACY_USERNAME
+app.state.config.YACY_PASSWORD = YACY_PASSWORD
 app.state.config.GOOGLE_PSE_API_KEY = GOOGLE_PSE_API_KEY
 app.state.config.GOOGLE_PSE_ENGINE_ID = GOOGLE_PSE_ENGINE_ID
 app.state.config.BRAVE_SEARCH_API_KEY = BRAVE_SEARCH_API_KEY
@@ -665,6 +717,10 @@ app.state.config.EXA_API_KEY = EXA_API_KEY
 app.state.config.PERPLEXITY_API_KEY = PERPLEXITY_API_KEY
 app.state.config.SOUGOU_API_SID = SOUGOU_API_SID
 app.state.config.SOUGOU_API_SK = SOUGOU_API_SK
+app.state.config.EXTERNAL_WEB_SEARCH_URL = EXTERNAL_WEB_SEARCH_URL
+app.state.config.EXTERNAL_WEB_SEARCH_API_KEY = EXTERNAL_WEB_SEARCH_API_KEY
+app.state.config.EXTERNAL_WEB_LOADER_URL = EXTERNAL_WEB_LOADER_URL
+app.state.config.EXTERNAL_WEB_LOADER_API_KEY = EXTERNAL_WEB_LOADER_API_KEY
 
 
 app.state.config.PLAYWRIGHT_WS_URL = PLAYWRIGHT_WS_URL
@@ -688,7 +744,10 @@ try:
     )
 
     app.state.rf = get_rf(
+        app.state.config.RAG_RERANKING_ENGINE,
         app.state.config.RAG_RERANKING_MODEL,
+        app.state.config.RAG_EXTERNAL_RERANKER_URL,
+        app.state.config.RAG_EXTERNAL_RERANKER_API_KEY,
         RAG_RERANKING_MODEL_AUTO_UPDATE,
     )
 except Exception as e:
@@ -793,6 +852,8 @@ app.state.config.DEEPGRAM_API_KEY = DEEPGRAM_API_KEY
 app.state.config.AUDIO_STT_AZURE_API_KEY = AUDIO_STT_AZURE_API_KEY
 app.state.config.AUDIO_STT_AZURE_REGION = AUDIO_STT_AZURE_REGION
 app.state.config.AUDIO_STT_AZURE_LOCALES = AUDIO_STT_AZURE_LOCALES
+app.state.config.AUDIO_STT_AZURE_BASE_URL = AUDIO_STT_AZURE_BASE_URL
+app.state.config.AUDIO_STT_AZURE_MAX_SPEAKERS = AUDIO_STT_AZURE_MAX_SPEAKERS
 
 app.state.config.TTS_OPENAI_API_BASE_URL = AUDIO_TTS_OPENAI_API_BASE_URL
 app.state.config.TTS_OPENAI_API_KEY = AUDIO_TTS_OPENAI_API_KEY
@@ -804,6 +865,7 @@ app.state.config.TTS_SPLIT_ON = AUDIO_TTS_SPLIT_ON
 
 
 app.state.config.TTS_AZURE_SPEECH_REGION = AUDIO_TTS_AZURE_SPEECH_REGION
+app.state.config.TTS_AZURE_SPEECH_BASE_URL = AUDIO_TTS_AZURE_SPEECH_BASE_URL
 app.state.config.TTS_AZURE_SPEECH_OUTPUT_FORMAT = AUDIO_TTS_AZURE_SPEECH_OUTPUT_FORMAT
 
 
@@ -866,7 +928,8 @@ class RedirectMiddleware(BaseHTTPMiddleware):
 
             # Check for the specific watch path and the presence of 'v' parameter
             if path.endswith("/watch") and "v" in query_params:
-                video_id = query_params["v"][0]  # Extract the first 'v' parameter
+                # Extract the first 'v' parameter
+                video_id = query_params["v"][0]
                 encoded_video_id = urlencode({"youtube": video_id})
                 redirect_url = f"/?{encoded_video_id}"
                 return RedirectResponse(url=redirect_url)
@@ -952,6 +1015,8 @@ app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 
 app.include_router(channels.router, prefix="/api/v1/channels", tags=["channels"])
 app.include_router(chats.router, prefix="/api/v1/chats", tags=["chats"])
+app.include_router(notes.router, prefix="/api/v1/notes", tags=["notes"])
+
 
 app.include_router(models.router, prefix="/api/v1/models", tags=["models"])
 app.include_router(knowledge.router, prefix="/api/v1/knowledge", tags=["knowledge"])
@@ -1280,6 +1345,7 @@ async def get_app_config(request: Request):
                 {
                     "enable_direct_connections": app.state.config.ENABLE_DIRECT_CONNECTIONS,
                     "enable_channels": app.state.config.ENABLE_CHANNELS,
+                    "enable_notes": app.state.config.ENABLE_NOTES,
                     "enable_web_search": app.state.config.ENABLE_WEB_SEARCH,
                     "enable_code_execution": app.state.config.ENABLE_CODE_EXECUTION,
                     "enable_code_interpreter": app.state.config.ENABLE_CODE_INTERPRETER,
@@ -1324,7 +1390,11 @@ async def get_app_config(request: Request):
                     "client_id": GOOGLE_DRIVE_CLIENT_ID.value,
                     "api_key": GOOGLE_DRIVE_API_KEY.value,
                 },
-                "onedrive": {"client_id": ONEDRIVE_CLIENT_ID.value},
+                "onedrive": {
+                    "client_id": ONEDRIVE_CLIENT_ID.value,
+                    "sharepoint_url": ONEDRIVE_SHAREPOINT_URL.value,
+                    "sharepoint_tenant_id": ONEDRIVE_SHAREPOINT_TENANT_ID.value,
+                },
                 "license_metadata": app.state.LICENSE_METADATA,
                 **(
                     {
@@ -1376,7 +1446,7 @@ async def get_app_latest_release_version(user=Depends(get_verified_user)):
         timeout = aiohttp.ClientTimeout(total=1)
         async with aiohttp.ClientSession(timeout=timeout, trust_env=True) as session:
             async with session.get(
-                "https://api.github.com/repos/open-webui/open-webui/releases/latest"
+                "https://api.github.com/repos/DFveloper/loop-chat/releases/latest"
             ) as response:
                 response.raise_for_status()
                 data = await response.json()
@@ -1432,11 +1502,11 @@ async def get_manifest_json():
         return {
             "name": app.state.WEBUI_NAME,
             "short_name": app.state.WEBUI_NAME,
-            "description": "Open WebUI is an open, extensible, user-friendly interface for AI that adapts to your workflow.",
+            "description": "LOOP Chat is an open, extensible, user-friendly interface for AI that adapts to your workflow.",
             "start_url": "/",
             "display": "standalone",
             "background_color": "#343541",
-            "orientation": "natural",
+            "orientation": "any",
             "icons": [
                 {
                     "src": "/static/logo.png",

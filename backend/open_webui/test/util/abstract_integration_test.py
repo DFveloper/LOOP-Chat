@@ -9,6 +9,7 @@ from pytest_docker.plugin import get_docker_ip
 from fastapi.testclient import TestClient
 from sqlalchemy import text, create_engine
 
+
 log = logging.getLogger(__name__)
 
 
@@ -72,7 +73,7 @@ class AbstractPostgresTest(AbstractIntegrationTest):
             env_vars_postgres = {
                 "POSTGRES_USER": "user",
                 "POSTGRES_PASSWORD": "example",
-                "POSTGRES_DB": "openwebui",
+                "POSTGRES_DB": "loopchat",
             }
             cls.docker_client = docker.from_env()
             cls.docker_client.containers.run(
@@ -91,7 +92,7 @@ class AbstractPostgresTest(AbstractIntegrationTest):
             db = None
             while retries > 0:
                 try:
-                    from loop_chat.config import loop_chat_DIR
+                    from open_webui.config import OPEN_WEBUI_DIR
 
                     db = create_engine(database_url, pool_pre_ping=True)
                     db = db.connect()
@@ -114,7 +115,7 @@ class AbstractPostgresTest(AbstractIntegrationTest):
             pytest.fail(f"Could not setup test environment: {ex}")
 
     def _check_db_connection(self):
-        from loop_chat.internal.db import Session
+        from open_webui.internal.db import Session
 
         retries = 10
         while retries > 0:
@@ -138,7 +139,7 @@ class AbstractPostgresTest(AbstractIntegrationTest):
         cls.docker_client.containers.get(cls.DOCKER_CONTAINER_NAME).remove(force=True)
 
     def teardown_method(self):
-        from loop_chat.internal.db import Session
+        from open_webui.internal.db import Session
 
         # rollback everything not yet committed
         Session.commit()

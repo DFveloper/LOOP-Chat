@@ -2,16 +2,16 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from pydantic import BaseModel
 
-from loop_chat.models.users import Users, UserModel
-from loop_chat.models.feedbacks import (
+from open_webui.models.users import Users, UserModel
+from open_webui.models.feedbacks import (
     FeedbackModel,
     FeedbackResponse,
     FeedbackForm,
     Feedbacks,
 )
 
-from loop_chat.constants import ERROR_MESSAGES
-from loop_chat.utils.auth import get_admin_user, get_verified_user
+from open_webui.constants import ERROR_MESSAGES
+from open_webui.utils.auth import get_admin_user, get_verified_user
 
 router = APIRouter()
 
@@ -56,7 +56,7 @@ async def update_config(
     }
 
 
-class FeedbackUserReponse(BaseModel):
+class UserResponse(BaseModel):
     id: str
     name: str
     email: str
@@ -68,7 +68,7 @@ class FeedbackUserReponse(BaseModel):
 
 
 class FeedbackUserResponse(FeedbackResponse):
-    user: Optional[FeedbackUserReponse] = None
+    user: Optional[UserResponse] = None
 
 
 @router.get("/feedbacks/all", response_model=list[FeedbackUserResponse])
@@ -77,9 +77,7 @@ async def get_all_feedbacks(user=Depends(get_admin_user)):
     return [
         FeedbackUserResponse(
             **feedback.model_dump(),
-            user=FeedbackUserReponse(
-                **Users.get_user_by_id(feedback.user_id).model_dump()
-            ),
+            user=UserResponse(**Users.get_user_by_id(feedback.user_id).model_dump()),
         )
         for feedback in feedbacks
     ]

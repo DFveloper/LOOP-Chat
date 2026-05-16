@@ -47,6 +47,7 @@
 	import XMark from '../icons/XMark.svelte';
 	import Headphone from '../icons/Headphone.svelte';
 	import GlobeAlt from '../icons/GlobeAlt.svelte';
+	import Thinking from '../icons/Thinking.svelte';
 	import PhotoSolid from '../icons/PhotoSolid.svelte';
 	import Photo from '../icons/Photo.svelte';
 	import CommandLine from '../icons/CommandLine.svelte';
@@ -83,13 +84,16 @@
 	export let imageGenerationEnabled = false;
 	export let webSearchEnabled = false;
 	export let codeInterpreterEnabled = false;
+	export let thinkingEnabled = false;
 
 	$: onChange({
 		prompt,
-		files,
+		files: files.filter((file) => file.type !== 'image'),
 		selectedToolIds,
 		imageGenerationEnabled,
-		webSearchEnabled
+		webSearchEnabled,
+		codeInterpreterEnabled,
+		thinkingEnabled
 	});
 
 	let showTools = false;
@@ -115,6 +119,11 @@
 	$: visionCapableModels = [...(atSelectedModel ? [atSelectedModel] : selectedModels)].filter(
 		(model) => $models.find((m) => m.id === model)?.info?.meta?.capabilities?.vision ?? true
 	);
+
+	let switchThinkingCapableModels = [];
+	$: switchThinkingCapableModels = $models
+		.filter((model) => model.info?.meta?.capabilities?.switch_thinking ?? false)
+		.map((model) => model.id);
 
 	const scrollToBottom = () => {
 		const element = document.getElementById('messages-container');
@@ -395,39 +404,37 @@
 				</div>
 
 				<div class="w-full relative">
-					{#if atSelectedModel !== undefined || selectedToolIds.length > 0 || webSearchEnabled || ($settings?.webSearch ?? false) === 'always' || imageGenerationEnabled || codeInterpreterEnabled}
+					{#if atSelectedModel !== undefined}
 						<div
 							class="px-3 pb-0.5 pt-1.5 text-left w-full flex flex-col absolute bottom-0 left-0 right-0 bg-linear-to-t from-white dark:from-gray-900 z-10"
 						>
-							{#if atSelectedModel !== undefined}
-								<div class="flex items-center justify-between w-full">
-									<div class="pl-[1px] flex items-center gap-2 text-sm dark:text-gray-500">
-										<img
-											crossorigin="anonymous"
-											alt="model profile"
-											class="size-3.5 max-w-[28px] object-cover rounded-full"
-											src={$models.find((model) => model.id === atSelectedModel.id)?.info?.meta
-												?.profile_image_url ??
-												($i18n.language === 'dg-DG'
-													? `/doge.png`
-													: `${WEBUI_BASE_URL}/static/favicon.png`)}
-										/>
-										<div class="translate-y-[0.5px]">
-											Talking to <span class=" font-medium">{atSelectedModel.name}</span>
-										</div>
-									</div>
-									<div>
-										<button
-											class="flex items-center dark:text-gray-500"
-											on:click={() => {
-												atSelectedModel = undefined;
-											}}
-										>
-											<XMark />
-										</button>
+							<div class="flex items-center justify-between w-full">
+								<div class="pl-[1px] flex items-center gap-2 text-sm dark:text-gray-500">
+									<img
+										crossorigin="anonymous"
+										alt="model profile"
+										class="size-3.5 max-w-[28px] object-cover rounded-full"
+										src={$models.find((model) => model.id === atSelectedModel.id)?.info?.meta
+											?.profile_image_url ??
+											($i18n.language === 'dg-DG'
+												? `/doge.png`
+												: `${WEBUI_BASE_URL}/static/favicon.png`)}
+									/>
+									<div class="translate-y-[0.5px]">
+										Talking to <span class=" font-medium">{atSelectedModel.name}</span>
 									</div>
 								</div>
-							{/if}
+								<div>
+									<button
+										class="flex items-center dark:text-gray-500"
+										on:click={() => {
+											atSelectedModel = undefined;
+										}}
+									>
+										<XMark />
+									</button>
+								</div>
+							</div>
 						</div>
 					{/if}
 
@@ -481,14 +488,14 @@
 					{#if recording}
 						<VoiceRecording
 							bind:recording
-							on:cancel={async () => {
+							onCancel={async () => {
 								recording = false;
 
 								await tick();
 								document.getElementById('chat-input')?.focus();
 							}}
-							on:confirm={async (e) => {
-								const { text, filename } = e.detail;
+							onConfirm={async (data) => {
+								const { text, filename } = data;
 								prompt = `${prompt}${text} `;
 
 								recording = false;
@@ -605,7 +612,7 @@
 								<div class="px-2.5">
 									{#if $settings?.richTextInput ?? true}
 										<div
-											class="scrollbar-hidden text-left bg-transparent dark:text-gray-100 outline-hidden w-full pt-3 px-1 resize-none h-fit max-h-80 overflow-auto"
+											class="scrollbar-hidden rtl:text-right ltr:text-left bg-transparent dark:text-gray-100 outline-hidden w-full pt-3 px-1 resize-none h-fit max-h-80 overflow-auto"
 											id="chat-input-container"
 										>
 											<RichTextInput
@@ -774,6 +781,7 @@
 														selectedToolIds = [];
 														webSearchEnabled = false;
 														imageGenerationEnabled = false;
+														thinkingEnabled = false;
 													}
 												}}
 												on:paste={async (e) => {
@@ -981,6 +989,7 @@
 													selectedToolIds = [];
 													webSearchEnabled = false;
 													imageGenerationEnabled = false;
+													thinkingEnabled = false;
 												}
 											}}
 											rows="1"
@@ -1063,9 +1072,9 @@
 													);
 												}
 											}}
-											uploadOneDriveHandler={async () => {
+											uploadOneDriveHandler={async (authorityType) => {
 												try {
-													const fileData = await pickAndDownloadFile();
+													const fileData = await pickAndDownloadFile(authorityType);
 													if (fileData) {
 														const file = new File([fileData.blob], fileData.name, {
 															type: fileData.blob.type || 'application/octet-stream'
@@ -1128,6 +1137,24 @@
 											{/if}
 
 											{#if $_user}
+												{#if selectedModels.length > 0 && selectedModels.some( (model) => switchThinkingCapableModels.includes(model) )}
+													<Tooltip content={$i18n.t('Thinking')} placement="top">
+														<button
+															on:click|preventDefault={() => (thinkingEnabled = !thinkingEnabled)}
+															type="button"
+															class="px-1.5 @xl:px-2.5 py-1.5 flex gap-1.5 items-center text-sm rounded-full font-medium transition-colors duration-300 focus:outline-hidden max-w-full overflow-hidden border {thinkingEnabled
+																? 'bg-blue-100 dark:bg-blue-500/20 border-blue-400/20 text-blue-500 dark:text-blue-400'
+																: 'bg-transparent border-transparent text-gray-600 dark:text-gray-300 border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'}"
+														>
+															<Thinking className="size-5" strokeWidth="1.75" />
+															<span
+																class="hidden @xl:block whitespace-nowrap overflow-hidden text-ellipsis translate-y-[0.5px]"
+																>{$i18n.t('Thinking')}</span
+															>
+														</button>
+													</Tooltip>
+												{/if}
+
 												{#if $config?.features?.enable_web_search && ($_user.role === 'admin' || $_user?.permissions?.features?.web_search)}
 													<Tooltip content={$i18n.t('Search the internet')} placement="top">
 														<button

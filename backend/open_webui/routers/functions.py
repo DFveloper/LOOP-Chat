@@ -3,18 +3,18 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from loop_chat.models.functions import (
+from open_webui.models.functions import (
     FunctionForm,
     FunctionModel,
     FunctionResponse,
     Functions,
 )
-from loop_chat.utils.plugin import load_function_module_by_id, replace_imports
-from loop_chat.config import CACHE_DIR
-from loop_chat.constants import ERROR_MESSAGES
+from open_webui.utils.plugin import load_function_module_by_id, replace_imports
+from open_webui.config import CACHE_DIR
+from open_webui.constants import ERROR_MESSAGES
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from loop_chat.utils.auth import get_admin_user, get_verified_user
-from loop_chat.env import SRC_LOG_LEVELS
+from open_webui.utils.auth import get_admin_user, get_verified_user
+from open_webui.env import SRC_LOG_LEVELS
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])

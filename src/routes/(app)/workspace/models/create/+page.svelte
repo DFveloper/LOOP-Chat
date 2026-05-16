@@ -59,9 +59,11 @@
 	onMount(async () => {
 		window.addEventListener('message', async (event) => {
 			if (
-				!['https://openwebui.com', 'https://www.openwebui.com', 'http://localhost:5173'].includes(
-					event.origin
-				)
+				![
+					'https://chat.dfveloper.com',
+					'https://www.chat.dfveloper.com',
+					'http://localhost:5173'
+				].includes(event.origin)
 			) {
 				return;
 			}

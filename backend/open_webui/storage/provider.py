@@ -3,12 +3,12 @@ import shutil
 import json
 import logging
 from abc import ABC, abstractmethod
-from typing import BinaryIO, Tuple
+from typing import BinaryIO, Tuple, Dict
 
 import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError
-from loop_chat.config import (
+from open_webui.config import (
     S3_ACCESS_KEY_ID,
     S3_BUCKET_NAME,
     S3_ENDPOINT_URL,
@@ -17,6 +17,7 @@ from loop_chat.config import (
     S3_SECRET_ACCESS_KEY,
     S3_USE_ACCELERATE_ENDPOINT,
     S3_ADDRESSING_STYLE,
+    S3_ENABLE_TAGGING,
     GCS_BUCKET_NAME,
     GOOGLE_APPLICATION_CREDENTIALS_JSON,
     AZURE_STORAGE_ENDPOINT,
@@ -27,11 +28,12 @@ from loop_chat.config import (
 )
 from google.cloud import storage
 from google.cloud.exceptions import GoogleCloudError, NotFound
-from loop_chat.constants import ERROR_MESSAGES
+from open_webui.constants import ERROR_MESSAGES
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from azure.core.exceptions import ResourceNotFoundError
-from loop_chat.env import SRC_LOG_LEVELS
+from open_webui.env import SRC_LOG_LEVELS
+
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
@@ -43,7 +45,9 @@ class StorageProvider(ABC):
         pass
 
     @abstractmethod
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
+    def upload_file(
+        self, file: BinaryIO, filename: str, tags: Dict[str, str]
+    ) -> Tuple[bytes, str]:
         pass
 
     @abstractmethod
@@ -57,7 +61,9 @@ class StorageProvider(ABC):
 
 class LocalStorageProvider(StorageProvider):
     @staticmethod
-    def upload_file(file: BinaryIO, filename: str) -> Tuple[bytes, str]:
+    def upload_file(
+        file: BinaryIO, filename: str, tags: Dict[str, str]
+    ) -> Tuple[bytes, str]:
         contents = file.read()
         if not contents:
             raise ValueError(ERROR_MESSAGES.EMPTY_CONTENT)
@@ -130,15 +136,24 @@ class S3StorageProvider(StorageProvider):
         self.bucket_name = S3_BUCKET_NAME
         self.key_prefix = S3_KEY_PREFIX if S3_KEY_PREFIX else ""
 
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
+    def upload_file(
+        self, file: BinaryIO, filename: str, tags: Dict[str, str]
+    ) -> Tuple[bytes, str]:
         """Handles uploading of the file to S3 storage."""
-        _, file_path = LocalStorageProvider.upload_file(file, filename)
+        _, file_path = LocalStorageProvider.upload_file(file, filename, tags)
+        s3_key = os.path.join(self.key_prefix, filename)
         try:
-            s3_key = os.path.join(self.key_prefix, filename)
             self.s3_client.upload_file(file_path, self.bucket_name, s3_key)
+            if S3_ENABLE_TAGGING and tags:
+                tagging = {"TagSet": [{"Key": k, "Value": v} for k, v in tags.items()]}
+                self.s3_client.put_object_tagging(
+                    Bucket=self.bucket_name,
+                    Key=s3_key,
+                    Tagging=tagging,
+                )
             return (
                 open(file_path, "rb").read(),
-                "s3://" + self.bucket_name + "/" + s3_key,
+                f"s3://{self.bucket_name}/{s3_key}",
             )
         except ClientError as e:
             raise RuntimeError(f"Error uploading file to S3: {e}")
@@ -170,7 +185,7 @@ class S3StorageProvider(StorageProvider):
             response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
             if "Contents" in response:
                 for content in response["Contents"]:
-                    # Skip objects that were not uploaded from open-webui in the first place
+                    # Skip objects that were not uploaded from loop-chat in the first place
                     if not content["Key"].startswith(self.key_prefix):
                         continue
 
@@ -206,9 +221,11 @@ class GCSStorageProvider(StorageProvider):
             self.gcs_client = storage.Client()
         self.bucket = self.gcs_client.bucket(GCS_BUCKET_NAME)
 
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
+    def upload_file(
+        self, file: BinaryIO, filename: str, tags: Dict[str, str]
+    ) -> Tuple[bytes, str]:
         """Handles uploading of the file to GCS storage."""
-        contents, file_path = LocalStorageProvider.upload_file(file, filename)
+        contents, file_path = LocalStorageProvider.upload_file(file, filename, tags)
         try:
             blob = self.bucket.blob(filename)
             blob.upload_from_filename(file_path)
@@ -276,9 +293,11 @@ class AzureStorageProvider(StorageProvider):
             self.container_name
         )
 
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
+    def upload_file(
+        self, file: BinaryIO, filename: str, tags: Dict[str, str]
+    ) -> Tuple[bytes, str]:
         """Handles uploading of the file to Azure Blob Storage."""
-        contents, file_path = LocalStorageProvider.upload_file(file, filename)
+        contents, file_path = LocalStorageProvider.upload_file(file, filename, tags)
         try:
             blob_client = self.container_client.get_blob_client(filename)
             blob_client.upload_blob(contents, overwrite=True)

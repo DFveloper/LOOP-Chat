@@ -5,9 +5,9 @@ from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
 from sqlalchemy import Engine
 
-from loop_chat.utils.telemetry.exporters import LazyBatchSpanProcessor
-from loop_chat.utils.telemetry.instrumentors import Instrumentor
-from loop_chat.env import OTEL_SERVICE_NAME, OTEL_EXPORTER_OTLP_ENDPOINT
+from open_webui.utils.telemetry.exporters import LazyBatchSpanProcessor
+from open_webui.utils.telemetry.instrumentors import Instrumentor
+from open_webui.env import OTEL_SERVICE_NAME, OTEL_EXPORTER_OTLP_ENDPOINT
 
 
 def setup(app: FastAPI, db_engine: Engine):

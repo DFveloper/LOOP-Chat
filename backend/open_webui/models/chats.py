@@ -4,9 +4,9 @@ import time
 import uuid
 from typing import Optional
 
-from loop_chat.internal.db import Base, get_db
-from loop_chat.models.tags import TagModel, Tag, Tags
-from loop_chat.env import SRC_LOG_LEVELS
+from open_webui.internal.db import Base, get_db
+from open_webui.models.tags import TagModel, Tag, Tags
+from open_webui.env import SRC_LOG_LEVELS
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Boolean, Column, String, Text, JSON
@@ -436,7 +436,7 @@ class ChatTable:
 
             all_chats = query.all()
 
-            # result has to be destrctured from sqlalchemy `row` and mapped to a dict since the `ChatModel`is not the returned dataclass.
+            # result has to be destructured from sqlalchemy `row` and mapped to a dict since the `ChatModel`is not the returned dataclass.
             return [
                 ChatTitleIdResponse.model_validate(
                     {
@@ -572,36 +572,47 @@ class ChatTable:
             if dialect_name == "sqlite":
                 # SQLite case: using JSON1 extension for JSON searching
                 query = query.filter(
-                    (Chat.title.ilike(f"%{search_text}%") | text("""
+                    (
+                        Chat.title.ilike(
+                            f"%{search_text}%"
+                        )  # Case-insensitive search in title
+                        | text(
+                            """
                             EXISTS (
                                 SELECT 1 
                                 FROM json_each(Chat.chat, '$.messages') AS message 
                                 WHERE LOWER(message.value->>'content') LIKE '%' || :search_text || '%'
                             )
-                            """)).params(  # Case-insensitive search in title
-                        search_text=search_text
-                    )
+                            """
+                        )
+                    ).params(search_text=search_text)
                 )
 
                 # Check if there are any tags to filter, it should have all the tags
                 if "none" in tag_ids:
-                    query = query.filter(text("""
+                    query = query.filter(
+                        text(
+                            """
                             NOT EXISTS (
                                 SELECT 1
                                 FROM json_each(Chat.meta, '$.tags') AS tag
                             )
-                            """))
+                            """
+                        )
+                    )
                 elif tag_ids:
                     query = query.filter(
                         and_(
                             *[
-                                text(f"""
+                                text(
+                                    f"""
                                     EXISTS (
                                         SELECT 1
                                         FROM json_each(Chat.meta, '$.tags') AS tag
                                         WHERE tag.value = :tag_id_{tag_idx}
                                     )
-                                    """).params(**{f"tag_id_{tag_idx}": tag_id})
+                                    """
+                                ).params(**{f"tag_id_{tag_idx}": tag_id})
                                 for tag_idx, tag_id in enumerate(tag_ids)
                             ]
                         )
@@ -610,36 +621,47 @@ class ChatTable:
             elif dialect_name == "postgresql":
                 # PostgreSQL relies on proper JSON query for search
                 query = query.filter(
-                    (Chat.title.ilike(f"%{search_text}%") | text("""
+                    (
+                        Chat.title.ilike(
+                            f"%{search_text}%"
+                        )  # Case-insensitive search in title
+                        | text(
+                            """
                             EXISTS (
                                 SELECT 1
                                 FROM json_array_elements(Chat.chat->'messages') AS message
                                 WHERE LOWER(message->>'content') LIKE '%' || :search_text || '%'
                             )
-                            """)).params(  # Case-insensitive search in title
-                        search_text=search_text
-                    )
+                            """
+                        )
+                    ).params(search_text=search_text)
                 )
 
                 # Check if there are any tags to filter, it should have all the tags
                 if "none" in tag_ids:
-                    query = query.filter(text("""
+                    query = query.filter(
+                        text(
+                            """
                             NOT EXISTS (
                                 SELECT 1
                                 FROM json_array_elements_text(Chat.meta->'tags') AS tag
                             )
-                            """))
+                            """
+                        )
+                    )
                 elif tag_ids:
                     query = query.filter(
                         and_(
                             *[
-                                text(f"""
+                                text(
+                                    f"""
                                     EXISTS (
                                         SELECT 1
                                         FROM json_array_elements_text(Chat.meta->'tags') AS tag
                                         WHERE tag = :tag_id_{tag_idx}
                                     )
-                                    """).params(**{f"tag_id_{tag_idx}": tag_id})
+                                    """
+                                ).params(**{f"tag_id_{tag_idx}": tag_id})
                                 for tag_idx, tag_id in enumerate(tag_ids)
                             ]
                         )
