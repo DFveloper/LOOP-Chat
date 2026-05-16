@@ -83,6 +83,7 @@ def convert_ollama_usage_to_openai(data: dict) -> dict:
 def convert_response_ollama_to_openai(ollama_response: dict) -> dict:
     model = ollama_response.get("model", "ollama")
     message_content = ollama_response.get("message", {}).get("content", "")
+    thinking_content = ollama_response.get("message", {}).get("thinking", None)
     tool_calls = ollama_response.get("message", {}).get("tool_calls", None)
     openai_tool_calls = None
 
@@ -96,6 +97,9 @@ def convert_response_ollama_to_openai(ollama_response: dict) -> dict:
     response = openai_chat_completion_message_template(
         model, message_content, openai_tool_calls, usage
     )
+    if thinking_content:
+        response["choices"][0]["message"]["reasoning_content"] = thinking_content
+
     return response
 
 
@@ -105,6 +109,7 @@ async def convert_streaming_response_ollama_to_openai(ollama_streaming_response)
 
         model = data.get("model", "ollama")
         message_content = data.get("message", {}).get("content", None)
+        thinking_content = data.get("message", {}).get("thinking", None)
         tool_calls = data.get("message", {}).get("tool_calls", None)
         openai_tool_calls = None
 
@@ -120,6 +125,9 @@ async def convert_streaming_response_ollama_to_openai(ollama_streaming_response)
         data = openai_chat_chunk_message_template(
             model, message_content, openai_tool_calls, usage
         )
+        if thinking_content:
+            data["choices"][0]["delta"]["reasoning_content"] = thinking_content
+            data["choices"][0]["finish_reason"] = None
 
         line = f"data: {json.dumps(data)}\n\n"
         yield line
