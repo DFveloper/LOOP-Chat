@@ -223,6 +223,9 @@ def convert_payload_openai_to_ollama(openai_payload: dict) -> dict:
     if "format" in openai_payload:
         ollama_payload["format"] = openai_payload["format"]
 
+    if "think" in openai_payload:
+        ollama_payload["think"] = openai_payload["think"]
+
     # If there are advanced parameters in the payload, format them in Ollama's options field
     if openai_payload.get("options"):
         ollama_payload["options"] = openai_payload["options"]

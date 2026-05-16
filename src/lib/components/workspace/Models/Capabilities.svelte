@@ -13,7 +13,7 @@
 		),
 		citations: $i18n.t('Displays citations in the response'),
 		switch_thinking: $i18n.t(
-			'Sends `enable_thinking: true` in the request. \nSupported toggle providers will return thinking content'
+			'Sends the provider-native thinking toggle in the request. \nSupported toggle providers will return thinking content'
 		)
 	};
 

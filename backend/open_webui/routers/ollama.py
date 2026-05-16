@@ -1109,6 +1109,7 @@ class GenerateChatCompletionForm(BaseModel):
     stream: Optional[bool] = True
     keep_alive: Optional[Union[int, str]] = None
     tools: Optional[list[dict]] = None
+    think: Optional[bool] = None
 
 
 async def get_ollama_url(request: Request, model: str, url_idx: Optional[int] = None):
